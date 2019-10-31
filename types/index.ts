@@ -1,0 +1,1 @@
+export { User } from "../backend/prisma/generated/prisma-client/index"

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "strict": true,
+    "jsx": "preserve",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "strictNullChecks": false,
+    "lib": [
+      "esnext"
+    ],
+    "types": [
+      "node"
+    ],
+    "typeRoots" : ["./node_modules/@types", "./typings"]
+  }
+}

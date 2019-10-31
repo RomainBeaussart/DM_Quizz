@@ -1,0 +1,35 @@
+directive @hasRight(right: String) on OBJECT | FIELD | FIELD_DEFINITION
+directive @mutationHasRight(right: String) on FIELD | FIELD_DEFINITION
+
+scalar Json
+scalar DateTime
+
+type Query {
+    loggedInUser: User
+}
+
+type Mutation {
+    login(data: LoginInput!): UserAuthPayload
+    signup(data: SignupInput!): SignupPayload
+}
+
+input LoginInput {
+    username: String!
+    password: String!
+}
+
+type UserAuthPayload {
+    token: String!
+    user: User!
+}
+
+input SignupInput {
+    username: String!
+    password: String!
+    firstname: String
+    lastname: String
+}
+
+type SignupPayload {
+    id: ID
+}
