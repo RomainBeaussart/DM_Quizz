@@ -1,19 +1,22 @@
 require('dotenv').config()
 
-import { formatError } from 'apollo-errors'
-import bodyParser from 'body-parser'
-import history from 'connect-history-api-fallback'
-import { readFileSync } from 'fs'
-import { forward } from 'graphql-middleware-forward-binding'
-import { GraphQLServer } from 'graphql-yoga'
-import { mergeTypes } from 'merge-graphql-schemas'
-import path from 'path'
 import { Prisma as PrismaBinding } from 'prisma-binding'
+import { GraphQLServer } from 'graphql-yoga'
+import { forward } from 'graphql-middleware-forward-binding'
+import { formatError } from 'apollo-errors'
 import serveStatic from 'serve-static'
-import { Prisma } from '../prisma/generated/prisma-client'
+import path from 'path'
+import history from 'connect-history-api-fallback'
+import bodyParser from 'body-parser'
+import { mergeTypes } from 'merge-graphql-schemas'
+import { readFileSync } from 'fs'
 import { getUserId } from './helpers/user'
 import user from './resolvers/user'
-import { appRouter as router } from './routes/routes'
+import { Prisma } from '../prisma/generated/prisma-client'
+import { appRouter } from './routes/routes'
+
+const SOCKET_PORT = 8080
+const SERVER_IP = '127.0.0.1'
 
 const forwardedRequests = [
     // ! Queries
@@ -72,21 +75,34 @@ const server = new GraphQLServer({
   }
 })
 
+// Express server config
+
 server.express.use(bodyParser.json({ limit: '50mb' }))
 server.express.use(bodyParser.urlencoded({
   limit: '10mb',
   extended: true
 }))
 
+server.express.set('views', './src/views')
+server.express.set('view engine', 'ejs')
+
 server.express.use(function (req, res, next) {
   req.prisma = prisma
   next()
 })
 
-// Set the router
-server.express.use('/', router())
+server.express.get('/status', (req, res) => {
+  res.sendStatus(200)
+})
 
 // server.express.use('/reconcileReceipt', reconcileReceiptRouter);
+
+const http = require('http').Server(server.express)
+http.listen(SOCKET_PORT, SERVER_IP)
+const io = require('socket.io')(http)
+server.express.set('socketio', io)
+
+server.express.use('/', appRouter())
 
 server.express.use(history())
 server.express.use(serveStatic(path.join(__dirname, '../../frontend/dist')))
@@ -101,6 +117,4 @@ server.start({
   formatError
 })
 .then(() => console.log(`Server is running on http://localhost:${process.env.PORT || 4000}`))
-.catch((err) => {
-  console.error(`Errors: the server is not running. Error: ${err}`)
-})
+.catch(() => console.error('The server is not running. Error occurs during the initialization.'))
