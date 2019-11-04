@@ -1,11 +1,12 @@
 {
-  "name": "PFE-node",
+  "name": "backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "nodemon",
-    "start-prod": "ts-node --files src/index.ts"
+    "start-prod": "ts-node --files src/index.ts",
+    "test": "mocha -r ts-node/register src/test/*.spec.ts"
   },
   "keywords": [],
   "author": "",
@@ -52,7 +53,11 @@
     "typescript": "^3.3.4000"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.4",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
     "ejs": "^2.7.1",
+    "mocha": "^6.2.2",
     "tslint": "^5.20.0",
     "tslint-config-standard": "^8.0.1"
   }
