@@ -1,41 +1,31 @@
 import { Router, Request, Response } from 'express'
+import { DmQuizz } from '../model/dmquizz.class'
 
 export const appRouter = () => {
   const router = Router()
-  let socketIsSet = false
 
-  function setSocket (io) {
-    io.sockets.on('connection', function (socket) {
-
-      socket.on('username', function (username) {
-        console.log(`${username} is connecting to the chat`)
-        socket.username = username
-        io.emit('is_online', '🔵 <i>' + socket.username + ' join the chat..</i>')
-      })
-
-      socket.on('disconnect', function (username) {
-        io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>')
-      })
-
-      socket.on('chat_message', function (message) {
-        io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message)
-      })
-
-      socketIsSet = true
-    })
-  }
+  let quizz
 
   router.get('/', (req: Request, res: Response) => {
     res.send('Router works !')
   })
 
-  router.get('/chat', (req: Request, res: Response) => {
-    if (!socketIsSet) {
-      const io = req.app.get('socketio')
-      setSocket(io)
+  router.post('/chat', (req: Request, res: Response) => {
+    const identifier: string = req.body.identifier
+    res.status(200)
+    if (!quizz) {
+      quizz = new DmQuizz(identifier, req.app.get('socketio'))
+      res.send(`chat ${identifier} has been created.`)
     }
-    // render chat front end
+    res.send(`A chat named ${quizz.identifier} already exists.`)
+  })
+
+  router.get('/chat', (req: Request, res: Response) => {
+    if (!quizz) {
+      quizz = new DmQuizz('myquizz', req.app.get('socketio'))
+    }
     res.render('index')
   })
+
   return router
 }

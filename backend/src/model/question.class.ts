@@ -38,4 +38,8 @@ export class Question {
     this.answers.push(this.correctAnswer)
     this.answers = shuffleAnswers(this.answers)
   }
+
+  toString () {
+    return `${this.question}\n${this.answers}`
+  }
 }

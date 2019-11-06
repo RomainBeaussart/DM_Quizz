@@ -13,17 +13,20 @@ export class Game {
   private players: Array<Player>
   private questionNumber: number
   private questions: Array<Question>
-
   private waitForAnswers: boolean
+
+  correctAnswer: string
 
   constructor (_players: Array<Player>, _questions: Array<Question>) {
     this.players = _players
     this.questions = _questions
-    this.questionNumber = 1
+    this.numberOfQuestions = this.questions.length
+    this.questionNumber = 0
     this.waitForAnswers = false
   }
 
   nextQuestion (): string {
+    console.log('NEXT QUESTION CALL')
     if (this.waitForAnswers) {
       return 'I\'m waiting for answers to the previous question'
     }
@@ -33,9 +36,11 @@ export class Game {
     }
 
     const question = this.questions[this.questionNumber]
+    this.correctAnswer = question.correctAnswer
+
     this.questionNumber++
     this.waitForAnswers = true
-    return question.question
+    return question.toString()
   }
 
   processAnswers (_answersMap: Map<Player, string>): Map<Player, Reward> {
