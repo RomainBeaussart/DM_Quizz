@@ -1,4 +1,4 @@
-# Analyser
+# Functionnal requirements
 
 ## 1. Analyser
 
