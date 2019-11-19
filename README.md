@@ -47,7 +47,7 @@ Toutes ces informations sont stocké dans la base de donnée. Pour stocker les m
 
 Nous voulons terminer le projet avant noël. Nous avons donc réparti nortre travail en trois semaines. 
 
-### Sprint 1
+###Sprint 1
 
 * [BACK] Authentication system 
 * [BACK] Main game Loop
@@ -56,7 +56,7 @@ Nous voulons terminer le projet avant noël. Nous avons donc réparti nortre tra
 * [FRONT] UI quizz
 * [FRONT] Authentication system
 
-### Sprint 2
+###Sprint 2
 
 * [BACK] Score system
 * [BACK] Store data
@@ -64,7 +64,7 @@ Nous voulons terminer le projet avant noël. Nous avons donc réparti nortre tra
 * [FRONT] UI Register / Login
 * [FRONT] Score system
 
-### Sprint 3
+###Sprint 3
 
 * [BACK] Optimisation
 * [FRONT] Score tabs
