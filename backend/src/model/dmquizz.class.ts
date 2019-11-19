@@ -8,7 +8,6 @@ export class DmQuizz {
   readonly id: number
 
   private nextPlayerId: number
-
   private players: Array<Player>
 
   identifier: string
