@@ -1,0 +1,14 @@
+type Player {
+    id: ID! @id
+    name: String!
+    password: String!
+    points: Int @default(value: 0)
+}
+
+type Question {
+    id: ID! @id
+    category: String!
+    question: String!
+    correctAnswer: String!
+    answers: [String!]! @scalarList(strategy: EMBEDDED)
+}

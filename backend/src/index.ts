@@ -11,7 +11,6 @@ import bodyParser from 'body-parser'
 import { mergeTypes } from 'merge-graphql-schemas'
 import { readFileSync } from 'fs'
 import { getUserId } from './helpers/user'
-import user from './resolvers/user'
 import { Prisma } from '../prisma/generated/prisma-client'
 import { appRouter } from './routes/routes'
 
@@ -20,20 +19,15 @@ const SERVER_IP = '127.0.0.1'
 
 const forwardedRequests = [
     // ! Queries
-  'Query.usersConnection', 'Query.user',
-  'Query.video', 'Query.videos',
-  'Query.display', 'Query.displays',
 
     // ! Mutations
-  'Mutation.createUser', 'Mutation.updateUser', 'Mutation.deleteUser'
+  
 ]
 
 const resolvers = {
   Query: {
-    ...user.Query
   },
   Mutation: {
-    ...user.Mutation
   },
 
   Subscription: {
@@ -62,7 +56,8 @@ let binding = new PrismaBinding({
 })
 
 const server = new GraphQLServer({
-  typeDefs: mergeTypes([readFileSync('./prisma/generated/prisma.graphql').toString(), readFileSync('./schema.graphql').toString()], { all: true }),
+  // typeDefs: mergeTypes([readFileSync('./prisma/generated/prisma.graphql').toString(), readFileSync('./schema.graphql').toString()], { all: true }),
+  typeDefs:readFileSync('./prisma/generated/prisma.graphql').toString(),
   resolvers,
   middlewares: [bindingForwardMiddleware, checkUserMiddleware],
   context: (c) => {
