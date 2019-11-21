@@ -1,8 +1,8 @@
 import 'mocha'
 import { expect } from 'chai'
-import { Question } from '../model/question.class'
-import { Game } from '../model/game.class'
-import { Player } from '../model/player.interface'
+import { Question } from '../models/question.model'
+import { Game } from '../models/game.model'
+import { Player } from '../models/player.model'
 
 describe('Game object', function () {
   const p0: Player = {

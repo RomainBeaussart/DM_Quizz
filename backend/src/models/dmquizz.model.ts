@@ -1,15 +1,9 @@
-import { Game, Reward } from './game.class'
-import { Player } from './player.interface'
+import { Game, Reward } from './game.model'
+import { Player } from './player.model'
 import axios from 'axios'
-import { Question } from './question.class'
+import { Question } from './question.model'
 
 export class DmQuizz {
-  readonly nbOfPlayersRequired: number = 1
-  readonly id: number
-
-  private nextPlayerId: number
-  private players: Array<Player>
-
   identifier: string
   game: Game
   gameStarted: boolean
@@ -27,41 +21,7 @@ export class DmQuizz {
     this.listen()
   }
 
-  listen () {
-    this.socketNamespace.on('connection', (socket) => {
-      socket.on('username', (username: string) => {
-        const player: Player = {
-          id: this.nextPlayerId,
-          name: username,
-          points: 0
-        }
-        this.nextPlayerId++
-        socket.player = player
-        this.join(player)
-        this.socketNamespace.emit('is_online', '🔵 <i>' + socket.player.name + ' join the chat..</i>')
-      })
 
-      socket.on('disconnect', (username: string) => {
-        this.socketNamespace.emit('is_online', '🔴 <i>' + socket.player.name + ' left the chat..</i>')
-      })
-
-      socket.on('chat_message', (message: string) => {
-        this.handlePlayerMessage(socket.player.id, message)
-        .then(() => console.log(`message "${message}" received from ${socket.player.name}.`))
-        .catch((err) => console.error(err))
-      })
-    })
-  }
-
-  private async handlePlayerMessage (playerId: number, message: string) {
-    const player: Player = this.players.find((player: Player) => player.id === playerId)
-
-    if (this.needAnswer) {
-      this.answers.set(player, message)
-    }
-
-    this.socketNamespace.emit('chat_message', '<strong>' + player.name + '</strong>: ' + message)
-  }
 
   private async play () {
     console.log('play function call', this.game.numberOfQuestions)

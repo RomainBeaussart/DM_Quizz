@@ -1,6 +1,6 @@
 import 'mocha'
 import { expect } from 'chai'
-import { Question } from '../model/question.class'
+import { Question } from '../models/question.model'
 
 describe('Question object', function () {
   describe('constructor', function () {
