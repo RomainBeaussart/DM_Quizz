@@ -11,14 +11,16 @@ import { Reward } from '../models/reward.model'
  * @param players players
  * @param questions questions of the game
  */
-export const createGame = (id: number, io, users: User[], questions: Question[]): Game => ({
+export const createGame = (id: number, io, users: User[], questions: Question[], maxPlayers: Number): Game => ({
   id: id,
   players: users.map(createPlayer),
   questions: questions,
   questionsDone: [],
   waitForAnswers: false,
+  maxPlayers: maxPlayers,
   socketNamespace: io.of(`/${id}`),
-  answers: new Map<Player, string>()
+  answers: new Map<Player, string>(),
+  start: false
 })
 
 /**
@@ -29,6 +31,7 @@ export const listen = (game: Game) => {
   game.socketNamespace.on('connection', (socket) => {
     socket.on('new_player', (user: User) => {
       game.socketNamespace.emit('player_is_online', createPlayer(user))
+      if (game.players[])
     })
 
     socket.on('disconnect', (player: Player) => {

@@ -21,7 +21,7 @@ const forwardedRequests = [
     // ! Queries
 
     // ! Mutations
-  
+
 ]
 
 const resolvers = {
@@ -57,7 +57,7 @@ let binding = new PrismaBinding({
 
 const server = new GraphQLServer({
   // typeDefs: mergeTypes([readFileSync('./prisma/generated/prisma.graphql').toString(), readFileSync('./schema.graphql').toString()], { all: true }),
-  typeDefs:readFileSync('./prisma/generated/prisma.graphql').toString(),
+  typeDefs: readFileSync('./prisma/generated/prisma.graphql').toString(),
   resolvers,
   middlewares: [bindingForwardMiddleware, checkUserMiddleware],
   context: (c) => {
