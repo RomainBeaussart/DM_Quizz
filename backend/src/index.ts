@@ -10,7 +10,6 @@ import history from 'connect-history-api-fallback'
 import bodyParser from 'body-parser'
 import { mergeTypes } from 'merge-graphql-schemas'
 import { readFileSync } from 'fs'
-import { getUserId } from './helpers/user'
 import { Prisma } from '../prisma/generated/prisma-client'
 import { appRouter } from './routes/routes'
 
@@ -35,16 +34,6 @@ const resolvers = {
   }
 }
 
-const checkUserMiddleware = (resolve, root, args, context, info) => {
-  if ((info.parentType === 'Query' || info.parentType === 'Mutation' || info.parentType === 'Subscription') &&
-        info.fieldName !== 'login' &&
-        info.fieldName !== 'signup') {
-    context.userId = getUserId(context)
-  }
-
-  return resolve(root, args, context, info)
-}
-
 const bindingForwardMiddleware = forward(...forwardedRequests)('binding')
 
 let prisma = new Prisma({
@@ -59,7 +48,7 @@ const server = new GraphQLServer({
   // typeDefs: mergeTypes([readFileSync('./prisma/generated/prisma.graphql').toString(), readFileSync('./schema.graphql').toString()], { all: true }),
   typeDefs: readFileSync('./prisma/generated/prisma.graphql').toString(),
   resolvers,
-  middlewares: [bindingForwardMiddleware, checkUserMiddleware],
+  middlewares: [bindingForwardMiddleware],
   context: (c) => {
     return {
       connection: c.connection,

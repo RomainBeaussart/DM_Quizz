@@ -9,7 +9,8 @@
                 label="Login"
                 solo
                 elevation="0"
-            ></v-text-field>
+            >
+            </v-text-field>
             <v-text-field
                 v-model="password"
                 label="Password"

@@ -4,6 +4,7 @@ import Index from './views/Index.vue'
 
 import Login from './views/Login.vue'
 import Chat from './views/Chat.vue'
+import Chats from './views/Chats.vue'
 
 Vue.use(Router);
 
@@ -16,7 +17,8 @@ const router = new Router({
         component: Index,
         children: [
           { path: '/', name: 'login', component: Login },
-          { path: '/chat/:id', name: 'chat', component: Chat, props: true }
+          { path: '/chats', name: 'chats', component: Chats },
+          { path: '/chats/:id', name: 'chat', component: Chat, props: true }
         ]
     },
 ],
