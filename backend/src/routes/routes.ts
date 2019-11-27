@@ -43,6 +43,7 @@ export const appRouter = () => {
     router.get('/index', (req: Request, res: Response) => {
       res.render('index')
     })
-    return router
   })
+  
+  return router
 }
