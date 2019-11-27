@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 var store: any = {
     state: {
+      user: { id: 1, name: 'testUser'}
     },
     mutations: {
     },

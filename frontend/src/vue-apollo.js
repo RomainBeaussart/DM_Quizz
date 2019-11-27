@@ -53,8 +53,7 @@ export function createProvider (options = {}) {
   })
   wsClient.connectionParams = () => ({
     headers: {
-      Authorization: ''
-      // localStorage.getItem(AUTH_TOKEN) ? `Bearer ${localStorage.getItem(AUTH_TOKEN)}` : ''
+      Authorization: localStorage.getItem(AUTH_TOKEN) ? `Bearer ${localStorage.getItem(AUTH_TOKEN)}` : ''
     }
   })
   apolloClient.wsClient = wsClient
@@ -76,6 +75,5 @@ export function createProvider (options = {}) {
       console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
     }
   })
-
   return apolloProvider
 }

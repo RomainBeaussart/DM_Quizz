@@ -32,6 +32,5 @@ new Vue({
     vuetify,
     // @ts-ignore
 
-    apolloProvider: createProvider(),
     render: h => h(App)
 } as any).$mount('#app');
