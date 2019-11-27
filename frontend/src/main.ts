@@ -9,7 +9,6 @@ import router from './router';
 import store from './store/store';
 
 import { createProvider } from './vue-apollo'
-import VideoBg from './components/VideoBackground.vue'
 import VueSelectImage from 'vue-select-image'
 
 //
@@ -23,7 +22,6 @@ Vue.config.productionTip = false;
 Vue.use(VueApollo)
 Vue.use(VueSelectImage)
 Vue.component('file-upload', VueUploadComponent)
-Vue.component('video-bg', VideoBg)
 
 require('vue-select-image/dist/vue-select-image.css')
 
