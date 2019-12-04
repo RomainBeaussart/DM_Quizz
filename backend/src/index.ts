@@ -18,6 +18,8 @@ const SERVER_IP = '127.0.0.1'
 
 const forwardedRequests = [
     // ! Queries
+    "Query.games", "Query.game", 
+    "Query.players", "Query.player"
 
     // ! Mutations
 

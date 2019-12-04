@@ -1,38 +1,84 @@
 <template>
     <v-container fluid>
-
+        <v-layout wrap>
+            <v-flex xs12 class="d-flex justify-center display-2" my-5>
+                Chats
+            </v-flex>
+            <v-flex xs12 class="d-flex justify-center">
+                <v-card
+                    width="80%"
+                >
+                    <v-data-table
+                        :headers="headers"
+                        :items="chats"
+                        class="table"
+                        fixed-header
+                        max-height="60vh"
+                        :loading="loading"
+                    >
+                        <!-- BODY -->
+                        <template v-slot:item = "props">
+                            <tr>
+                                <td class="text-center"> {{ last(props.item.questions).question }} </td>
+                                <td class="text-center"> 
+                                    <v-tooltip bottom>
+                                        <template v-slot:activator="{ on }">
+                                            <v-icon color="primary" dark v-on="on">mdi-home</v-icon>
+                                        </template>
+                                        <span>Tooltip</span>
+                                    </v-tooltip>
+                                 </td>
+                            </tr>
+                        </template>
+                    </v-data-table>
+                </v-card>
+            </v-flex>
+        </v-layout>
     </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 
-import GAMES from '../graphql/Games.gql'
+import PLAYER_GAMES from '../graphql/PlayerGames.gql'
 import { Apollo } from '../decorators'
 
 @Component
 export default class Chats extends Vue {
 
+    headers = [
+        { text: "Last Question", value: "" },
+        { text: "Info", value: ""},
+    ]
+
     get id() {
-        return "zegpznrigp"
+        return this.$store.state.user.id
     }
 
     @Apollo({
-        query: GAMES,
+        query: PLAYER_GAMES,
         variables() {
             return {
                 id: this.id
             }
         },
+        skip(){
+            return this.id
+        },
         result({ data, loading, networkStatus }) {
             if (!loading) {
-                if (data && data.serie) {
+                if (data && data.chats) {
+                    console.log(data.chats)
                     this.chats = data.chats
                 }
             }
         }
     })
     chats= []
+
+    last(list: Array<any>) {
+        return list[list.length - 1]
+    }
 
 }
 </script>

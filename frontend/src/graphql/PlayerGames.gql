@@ -1,0 +1,16 @@
+query Games ($id:ID!){
+    players(where: {
+        id: $id
+    }){
+        games {
+            id
+            players {
+                name
+            }
+            maxPlayers
+            questions {
+                question
+            }
+        }
+    }
+}

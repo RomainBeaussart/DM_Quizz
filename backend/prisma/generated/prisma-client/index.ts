@@ -16,6 +16,7 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 export type Maybe<T> = T | undefined | null;
 
 export interface Exists {
+  game: (where?: GameWhereInput) => Promise<boolean>;
   player: (where?: PlayerWhereInput) => Promise<boolean>;
   question: (where?: QuestionWhereInput) => Promise<boolean>;
 }
@@ -39,6 +40,25 @@ export interface Prisma {
    * Queries
    */
 
+  game: (where: GameWhereUniqueInput) => GameNullablePromise;
+  games: (args?: {
+    where?: GameWhereInput;
+    orderBy?: GameOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Game>;
+  gamesConnection: (args?: {
+    where?: GameWhereInput;
+    orderBy?: GameOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => GameConnectionPromise;
   player: (where: PlayerWhereUniqueInput) => PlayerNullablePromise;
   players: (args?: {
     where?: PlayerWhereInput;
@@ -83,6 +103,22 @@ export interface Prisma {
    * Mutations
    */
 
+  createGame: (data: GameCreateInput) => GamePromise;
+  updateGame: (args: {
+    data: GameUpdateInput;
+    where: GameWhereUniqueInput;
+  }) => GamePromise;
+  updateManyGames: (args: {
+    data: GameUpdateManyMutationInput;
+    where?: GameWhereInput;
+  }) => BatchPayloadPromise;
+  upsertGame: (args: {
+    where: GameWhereUniqueInput;
+    create: GameCreateInput;
+    update: GameUpdateInput;
+  }) => GamePromise;
+  deleteGame: (where: GameWhereUniqueInput) => GamePromise;
+  deleteManyGames: (where?: GameWhereInput) => BatchPayloadPromise;
   createPlayer: (data: PlayerCreateInput) => PlayerPromise;
   updatePlayer: (args: {
     data: PlayerUpdateInput;
@@ -124,6 +160,9 @@ export interface Prisma {
 }
 
 export interface Subscription {
+  game: (
+    where?: GameSubscriptionWhereInput
+  ) => GameSubscriptionPayloadSubscription;
   player: (
     where?: PlayerSubscriptionWhereInput
   ) => PlayerSubscriptionPayloadSubscription;
@@ -150,6 +189,12 @@ export type PlayerOrderByInput =
   | "points_ASC"
   | "points_DESC";
 
+export type GameOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "maxPlayers_ASC"
+  | "maxPlayers_DESC";
+
 export type QuestionOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -162,17 +207,150 @@ export type QuestionOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
+export interface PlayerScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  password?: Maybe<String>;
+  password_not?: Maybe<String>;
+  password_in?: Maybe<String[] | String>;
+  password_not_in?: Maybe<String[] | String>;
+  password_lt?: Maybe<String>;
+  password_lte?: Maybe<String>;
+  password_gt?: Maybe<String>;
+  password_gte?: Maybe<String>;
+  password_contains?: Maybe<String>;
+  password_not_contains?: Maybe<String>;
+  password_starts_with?: Maybe<String>;
+  password_not_starts_with?: Maybe<String>;
+  password_ends_with?: Maybe<String>;
+  password_not_ends_with?: Maybe<String>;
+  points?: Maybe<Int>;
+  points_not?: Maybe<Int>;
+  points_in?: Maybe<Int[] | Int>;
+  points_not_in?: Maybe<Int[] | Int>;
+  points_lt?: Maybe<Int>;
+  points_lte?: Maybe<Int>;
+  points_gt?: Maybe<Int>;
+  points_gte?: Maybe<Int>;
+  AND?: Maybe<PlayerScalarWhereInput[] | PlayerScalarWhereInput>;
+  OR?: Maybe<PlayerScalarWhereInput[] | PlayerScalarWhereInput>;
+  NOT?: Maybe<PlayerScalarWhereInput[] | PlayerScalarWhereInput>;
+}
+
+export type GameWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface QuestionUpdateManyInput {
+  create?: Maybe<QuestionCreateInput[] | QuestionCreateInput>;
+  update?: Maybe<
+    | QuestionUpdateWithWhereUniqueNestedInput[]
+    | QuestionUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | QuestionUpsertWithWhereUniqueNestedInput[]
+    | QuestionUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<QuestionWhereUniqueInput[] | QuestionWhereUniqueInput>;
+  connect?: Maybe<QuestionWhereUniqueInput[] | QuestionWhereUniqueInput>;
+  set?: Maybe<QuestionWhereUniqueInput[] | QuestionWhereUniqueInput>;
+  disconnect?: Maybe<QuestionWhereUniqueInput[] | QuestionWhereUniqueInput>;
+  deleteMany?: Maybe<QuestionScalarWhereInput[] | QuestionScalarWhereInput>;
+  updateMany?: Maybe<
+    | QuestionUpdateManyWithWhereNestedInput[]
+    | QuestionUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface GameWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  players_every?: Maybe<PlayerWhereInput>;
+  players_some?: Maybe<PlayerWhereInput>;
+  players_none?: Maybe<PlayerWhereInput>;
+  maxPlayers?: Maybe<Int>;
+  maxPlayers_not?: Maybe<Int>;
+  maxPlayers_in?: Maybe<Int[] | Int>;
+  maxPlayers_not_in?: Maybe<Int[] | Int>;
+  maxPlayers_lt?: Maybe<Int>;
+  maxPlayers_lte?: Maybe<Int>;
+  maxPlayers_gt?: Maybe<Int>;
+  maxPlayers_gte?: Maybe<Int>;
+  questions_every?: Maybe<QuestionWhereInput>;
+  questions_some?: Maybe<QuestionWhereInput>;
+  questions_none?: Maybe<QuestionWhereInput>;
+  AND?: Maybe<GameWhereInput[] | GameWhereInput>;
+  OR?: Maybe<GameWhereInput[] | GameWhereInput>;
+  NOT?: Maybe<GameWhereInput[] | GameWhereInput>;
+}
+
+export interface QuestionCreateManyInput {
+  create?: Maybe<QuestionCreateInput[] | QuestionCreateInput>;
+  connect?: Maybe<QuestionWhereUniqueInput[] | QuestionWhereUniqueInput>;
+}
+
+export interface PlayerCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  password: String;
+  points?: Maybe<Int>;
+  games?: Maybe<GameCreateManyWithoutPlayersInput>;
+}
+
+export interface QuestionCreateInput {
+  id?: Maybe<ID_Input>;
+  category: String;
+  question: String;
+  correctAnswer: String;
+  answers?: Maybe<QuestionCreateanswersInput>;
+}
+
+export interface QuestionUpdateWithWhereUniqueNestedInput {
+  where: QuestionWhereUniqueInput;
+  data: QuestionUpdateDataInput;
+}
+
 export interface QuestionCreateanswersInput {
   set?: Maybe<String[] | String>;
 }
-
-export type PlayerWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export type QuestionWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
 
 export interface PlayerWhereInput {
   id?: Maybe<ID_Input>;
@@ -225,43 +403,143 @@ export interface PlayerWhereInput {
   points_lte?: Maybe<Int>;
   points_gt?: Maybe<Int>;
   points_gte?: Maybe<Int>;
+  games_every?: Maybe<GameWhereInput>;
+  games_some?: Maybe<GameWhereInput>;
+  games_none?: Maybe<GameWhereInput>;
   AND?: Maybe<PlayerWhereInput[] | PlayerWhereInput>;
   OR?: Maybe<PlayerWhereInput[] | PlayerWhereInput>;
   NOT?: Maybe<PlayerWhereInput[] | PlayerWhereInput>;
 }
 
-export interface PlayerUpdateManyMutationInput {
+export interface GameUpdateInput {
+  players?: Maybe<PlayerUpdateManyWithoutGamesInput>;
+  maxPlayers?: Maybe<Int>;
+  questions?: Maybe<QuestionUpdateManyInput>;
+}
+
+export interface GameSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<GameWhereInput>;
+  AND?: Maybe<GameSubscriptionWhereInput[] | GameSubscriptionWhereInput>;
+  OR?: Maybe<GameSubscriptionWhereInput[] | GameSubscriptionWhereInput>;
+  NOT?: Maybe<GameSubscriptionWhereInput[] | GameSubscriptionWhereInput>;
+}
+
+export interface PlayerUpdateManyWithoutGamesInput {
+  create?: Maybe<
+    PlayerCreateWithoutGamesInput[] | PlayerCreateWithoutGamesInput
+  >;
+  delete?: Maybe<PlayerWhereUniqueInput[] | PlayerWhereUniqueInput>;
+  connect?: Maybe<PlayerWhereUniqueInput[] | PlayerWhereUniqueInput>;
+  set?: Maybe<PlayerWhereUniqueInput[] | PlayerWhereUniqueInput>;
+  disconnect?: Maybe<PlayerWhereUniqueInput[] | PlayerWhereUniqueInput>;
+  update?: Maybe<
+    | PlayerUpdateWithWhereUniqueWithoutGamesInput[]
+    | PlayerUpdateWithWhereUniqueWithoutGamesInput
+  >;
+  upsert?: Maybe<
+    | PlayerUpsertWithWhereUniqueWithoutGamesInput[]
+    | PlayerUpsertWithWhereUniqueWithoutGamesInput
+  >;
+  deleteMany?: Maybe<PlayerScalarWhereInput[] | PlayerScalarWhereInput>;
+  updateMany?: Maybe<
+    | PlayerUpdateManyWithWhereNestedInput[]
+    | PlayerUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface QuestionUpdateInput {
+  category?: Maybe<String>;
+  question?: Maybe<String>;
+  correctAnswer?: Maybe<String>;
+  answers?: Maybe<QuestionUpdateanswersInput>;
+}
+
+export interface PlayerUpdateWithWhereUniqueWithoutGamesInput {
+  where: PlayerWhereUniqueInput;
+  data: PlayerUpdateWithoutGamesDataInput;
+}
+
+export interface GameUpdateManyDataInput {
+  maxPlayers?: Maybe<Int>;
+}
+
+export interface PlayerUpdateWithoutGamesDataInput {
   name?: Maybe<String>;
   password?: Maybe<String>;
   points?: Maybe<Int>;
 }
 
-export interface QuestionUpdateanswersInput {
-  set?: Maybe<String[] | String>;
+export interface GameUpdateManyWithWhereNestedInput {
+  where: GameScalarWhereInput;
+  data: GameUpdateManyDataInput;
 }
 
-export interface PlayerCreateInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  password: String;
-  points?: Maybe<Int>;
+export interface PlayerUpsertWithWhereUniqueWithoutGamesInput {
+  where: PlayerWhereUniqueInput;
+  update: PlayerUpdateWithoutGamesDataInput;
+  create: PlayerCreateWithoutGamesInput;
+}
+
+export interface GameUpsertWithWhereUniqueWithoutPlayersInput {
+  where: GameWhereUniqueInput;
+  update: GameUpdateWithoutPlayersDataInput;
+  create: GameCreateWithoutPlayersInput;
 }
 
 export interface PlayerUpdateInput {
   name?: Maybe<String>;
   password?: Maybe<String>;
   points?: Maybe<Int>;
+  games?: Maybe<GameUpdateManyWithoutPlayersInput>;
 }
 
-export interface PlayerSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<PlayerWhereInput>;
-  AND?: Maybe<PlayerSubscriptionWhereInput[] | PlayerSubscriptionWhereInput>;
-  OR?: Maybe<PlayerSubscriptionWhereInput[] | PlayerSubscriptionWhereInput>;
-  NOT?: Maybe<PlayerSubscriptionWhereInput[] | PlayerSubscriptionWhereInput>;
+export interface GameUpdateWithoutPlayersDataInput {
+  maxPlayers?: Maybe<Int>;
+  questions?: Maybe<QuestionUpdateManyInput>;
+}
+
+export interface PlayerUpdateManyWithWhereNestedInput {
+  where: PlayerScalarWhereInput;
+  data: PlayerUpdateManyDataInput;
+}
+
+export interface GameUpdateManyWithoutPlayersInput {
+  create?: Maybe<
+    GameCreateWithoutPlayersInput[] | GameCreateWithoutPlayersInput
+  >;
+  delete?: Maybe<GameWhereUniqueInput[] | GameWhereUniqueInput>;
+  connect?: Maybe<GameWhereUniqueInput[] | GameWhereUniqueInput>;
+  set?: Maybe<GameWhereUniqueInput[] | GameWhereUniqueInput>;
+  disconnect?: Maybe<GameWhereUniqueInput[] | GameWhereUniqueInput>;
+  update?: Maybe<
+    | GameUpdateWithWhereUniqueWithoutPlayersInput[]
+    | GameUpdateWithWhereUniqueWithoutPlayersInput
+  >;
+  upsert?: Maybe<
+    | GameUpsertWithWhereUniqueWithoutPlayersInput[]
+    | GameUpsertWithWhereUniqueWithoutPlayersInput
+  >;
+  deleteMany?: Maybe<GameScalarWhereInput[] | GameScalarWhereInput>;
+  updateMany?: Maybe<
+    GameUpdateManyWithWhereNestedInput[] | GameUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface PlayerUpdateManyDataInput {
+  name?: Maybe<String>;
+  password?: Maybe<String>;
+  points?: Maybe<Int>;
+}
+
+export interface GameCreateInput {
+  id?: Maybe<ID_Input>;
+  players?: Maybe<PlayerCreateManyWithoutGamesInput>;
+  maxPlayers?: Maybe<Int>;
+  questions?: Maybe<QuestionCreateManyInput>;
 }
 
 export interface QuestionWhereInput {
@@ -326,11 +604,153 @@ export interface QuestionWhereInput {
   NOT?: Maybe<QuestionWhereInput[] | QuestionWhereInput>;
 }
 
-export interface QuestionUpdateInput {
+export interface PlayerCreateWithoutGamesInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  password: String;
+  points?: Maybe<Int>;
+}
+
+export interface GameCreateWithoutPlayersInput {
+  id?: Maybe<ID_Input>;
+  maxPlayers?: Maybe<Int>;
+  questions?: Maybe<QuestionCreateManyInput>;
+}
+
+export interface PlayerSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PlayerWhereInput>;
+  AND?: Maybe<PlayerSubscriptionWhereInput[] | PlayerSubscriptionWhereInput>;
+  OR?: Maybe<PlayerSubscriptionWhereInput[] | PlayerSubscriptionWhereInput>;
+  NOT?: Maybe<PlayerSubscriptionWhereInput[] | PlayerSubscriptionWhereInput>;
+}
+
+export interface QuestionUpdateDataInput {
   category?: Maybe<String>;
   question?: Maybe<String>;
   correctAnswer?: Maybe<String>;
   answers?: Maybe<QuestionUpdateanswersInput>;
+}
+
+export interface PlayerUpdateManyMutationInput {
+  name?: Maybe<String>;
+  password?: Maybe<String>;
+  points?: Maybe<Int>;
+}
+
+export interface QuestionUpdateanswersInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface GameScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  maxPlayers?: Maybe<Int>;
+  maxPlayers_not?: Maybe<Int>;
+  maxPlayers_in?: Maybe<Int[] | Int>;
+  maxPlayers_not_in?: Maybe<Int[] | Int>;
+  maxPlayers_lt?: Maybe<Int>;
+  maxPlayers_lte?: Maybe<Int>;
+  maxPlayers_gt?: Maybe<Int>;
+  maxPlayers_gte?: Maybe<Int>;
+  AND?: Maybe<GameScalarWhereInput[] | GameScalarWhereInput>;
+  OR?: Maybe<GameScalarWhereInput[] | GameScalarWhereInput>;
+  NOT?: Maybe<GameScalarWhereInput[] | GameScalarWhereInput>;
+}
+
+export interface QuestionUpsertWithWhereUniqueNestedInput {
+  where: QuestionWhereUniqueInput;
+  update: QuestionUpdateDataInput;
+  create: QuestionCreateInput;
+}
+
+export interface GameUpdateWithWhereUniqueWithoutPlayersInput {
+  where: GameWhereUniqueInput;
+  data: GameUpdateWithoutPlayersDataInput;
+}
+
+export interface QuestionScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  category?: Maybe<String>;
+  category_not?: Maybe<String>;
+  category_in?: Maybe<String[] | String>;
+  category_not_in?: Maybe<String[] | String>;
+  category_lt?: Maybe<String>;
+  category_lte?: Maybe<String>;
+  category_gt?: Maybe<String>;
+  category_gte?: Maybe<String>;
+  category_contains?: Maybe<String>;
+  category_not_contains?: Maybe<String>;
+  category_starts_with?: Maybe<String>;
+  category_not_starts_with?: Maybe<String>;
+  category_ends_with?: Maybe<String>;
+  category_not_ends_with?: Maybe<String>;
+  question?: Maybe<String>;
+  question_not?: Maybe<String>;
+  question_in?: Maybe<String[] | String>;
+  question_not_in?: Maybe<String[] | String>;
+  question_lt?: Maybe<String>;
+  question_lte?: Maybe<String>;
+  question_gt?: Maybe<String>;
+  question_gte?: Maybe<String>;
+  question_contains?: Maybe<String>;
+  question_not_contains?: Maybe<String>;
+  question_starts_with?: Maybe<String>;
+  question_not_starts_with?: Maybe<String>;
+  question_ends_with?: Maybe<String>;
+  question_not_ends_with?: Maybe<String>;
+  correctAnswer?: Maybe<String>;
+  correctAnswer_not?: Maybe<String>;
+  correctAnswer_in?: Maybe<String[] | String>;
+  correctAnswer_not_in?: Maybe<String[] | String>;
+  correctAnswer_lt?: Maybe<String>;
+  correctAnswer_lte?: Maybe<String>;
+  correctAnswer_gt?: Maybe<String>;
+  correctAnswer_gte?: Maybe<String>;
+  correctAnswer_contains?: Maybe<String>;
+  correctAnswer_not_contains?: Maybe<String>;
+  correctAnswer_starts_with?: Maybe<String>;
+  correctAnswer_not_starts_with?: Maybe<String>;
+  correctAnswer_ends_with?: Maybe<String>;
+  correctAnswer_not_ends_with?: Maybe<String>;
+  AND?: Maybe<QuestionScalarWhereInput[] | QuestionScalarWhereInput>;
+  OR?: Maybe<QuestionScalarWhereInput[] | QuestionScalarWhereInput>;
+  NOT?: Maybe<QuestionScalarWhereInput[] | QuestionScalarWhereInput>;
+}
+
+export interface PlayerCreateManyWithoutGamesInput {
+  create?: Maybe<
+    PlayerCreateWithoutGamesInput[] | PlayerCreateWithoutGamesInput
+  >;
+  connect?: Maybe<PlayerWhereUniqueInput[] | PlayerWhereUniqueInput>;
 }
 
 export interface QuestionUpdateManyMutationInput {
@@ -340,13 +760,33 @@ export interface QuestionUpdateManyMutationInput {
   answers?: Maybe<QuestionUpdateanswersInput>;
 }
 
-export interface QuestionCreateInput {
-  id?: Maybe<ID_Input>;
-  category: String;
-  question: String;
-  correctAnswer: String;
-  answers?: Maybe<QuestionCreateanswersInput>;
+export interface GameCreateManyWithoutPlayersInput {
+  create?: Maybe<
+    GameCreateWithoutPlayersInput[] | GameCreateWithoutPlayersInput
+  >;
+  connect?: Maybe<GameWhereUniqueInput[] | GameWhereUniqueInput>;
 }
+
+export interface GameUpdateManyMutationInput {
+  maxPlayers?: Maybe<Int>;
+}
+
+export interface QuestionUpdateManyDataInput {
+  category?: Maybe<String>;
+  question?: Maybe<String>;
+  correctAnswer?: Maybe<String>;
+  answers?: Maybe<QuestionUpdateanswersInput>;
+}
+
+export interface QuestionUpdateManyWithWhereNestedInput {
+  where: QuestionScalarWhereInput;
+  data: QuestionUpdateManyDataInput;
+}
+
+export type PlayerWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
 
 export interface QuestionSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
@@ -363,47 +803,12 @@ export interface QuestionSubscriptionWhereInput {
   >;
 }
 
+export type QuestionWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export interface NodeNode {
   id: ID_Output;
-}
-
-export interface AggregateQuestion {
-  count: Int;
-}
-
-export interface AggregateQuestionPromise
-  extends Promise<AggregateQuestion>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateQuestionSubscription
-  extends Promise<AsyncIterator<AggregateQuestion>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface PageInfo {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
-}
-
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
-    Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface QuestionPreviousValues {
@@ -434,71 +839,21 @@ export interface QuestionPreviousValuesSubscription
   answers: () => Promise<AsyncIterator<String[]>>;
 }
 
-export interface PlayerConnection {
-  pageInfo: PageInfo;
-  edges: PlayerEdge[];
+export interface GameEdge {
+  node: Game;
+  cursor: String;
 }
 
-export interface PlayerConnectionPromise
-  extends Promise<PlayerConnection>,
+export interface GameEdgePromise extends Promise<GameEdge>, Fragmentable {
+  node: <T = GamePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface GameEdgeSubscription
+  extends Promise<AsyncIterator<GameEdge>>,
     Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<PlayerEdge>>() => T;
-  aggregate: <T = AggregatePlayerPromise>() => T;
-}
-
-export interface PlayerConnectionSubscription
-  extends Promise<AsyncIterator<PlayerConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<PlayerEdgeSubscription>>>() => T;
-  aggregate: <T = AggregatePlayerSubscription>() => T;
-}
-
-export interface QuestionConnection {
-  pageInfo: PageInfo;
-  edges: QuestionEdge[];
-}
-
-export interface QuestionConnectionPromise
-  extends Promise<QuestionConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<QuestionEdge>>() => T;
-  aggregate: <T = AggregateQuestionPromise>() => T;
-}
-
-export interface QuestionConnectionSubscription
-  extends Promise<AsyncIterator<QuestionConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<QuestionEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateQuestionSubscription>() => T;
-}
-
-export interface PlayerSubscriptionPayload {
-  mutation: MutationType;
-  node: Player;
-  updatedFields: String[];
-  previousValues: PlayerPreviousValues;
-}
-
-export interface PlayerSubscriptionPayloadPromise
-  extends Promise<PlayerSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = PlayerPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = PlayerPreviousValuesPromise>() => T;
-}
-
-export interface PlayerSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<PlayerSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = PlayerSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = PlayerPreviousValuesSubscription>() => T;
+  node: <T = GameSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface PlayerPreviousValues {
@@ -526,36 +881,248 @@ export interface PlayerPreviousValuesSubscription
   points: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface Player {
+export interface BatchPayload {
+  count: Long;
+}
+
+export interface BatchPayloadPromise
+  extends Promise<BatchPayload>,
+    Fragmentable {
+  count: () => Promise<Long>;
+}
+
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayload>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface QuestionSubscriptionPayload {
+  mutation: MutationType;
+  node: Question;
+  updatedFields: String[];
+  previousValues: QuestionPreviousValues;
+}
+
+export interface QuestionSubscriptionPayloadPromise
+  extends Promise<QuestionSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = QuestionPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = QuestionPreviousValuesPromise>() => T;
+}
+
+export interface QuestionSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<QuestionSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = QuestionSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = QuestionPreviousValuesSubscription>() => T;
+}
+
+export interface PageInfo {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
+}
+
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface QuestionEdge {
+  node: Question;
+  cursor: String;
+}
+
+export interface QuestionEdgePromise
+  extends Promise<QuestionEdge>,
+    Fragmentable {
+  node: <T = QuestionPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface QuestionEdgeSubscription
+  extends Promise<AsyncIterator<QuestionEdge>>,
+    Fragmentable {
+  node: <T = QuestionSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface GameConnection {
+  pageInfo: PageInfo;
+  edges: GameEdge[];
+}
+
+export interface GameConnectionPromise
+  extends Promise<GameConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<GameEdge>>() => T;
+  aggregate: <T = AggregateGamePromise>() => T;
+}
+
+export interface GameConnectionSubscription
+  extends Promise<AsyncIterator<GameConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<GameEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateGameSubscription>() => T;
+}
+
+export interface AggregatePlayer {
+  count: Int;
+}
+
+export interface AggregatePlayerPromise
+  extends Promise<AggregatePlayer>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePlayerSubscription
+  extends Promise<AsyncIterator<AggregatePlayer>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface Game {
   id: ID_Output;
-  name: String;
-  password: String;
-  points?: Int;
+  maxPlayers?: Int;
 }
 
-export interface PlayerPromise extends Promise<Player>, Fragmentable {
+export interface GamePromise extends Promise<Game>, Fragmentable {
   id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  password: () => Promise<String>;
-  points: () => Promise<Int>;
+  players: <T = FragmentableArray<Player>>(args?: {
+    where?: PlayerWhereInput;
+    orderBy?: PlayerOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  maxPlayers: () => Promise<Int>;
+  questions: <T = FragmentableArray<Question>>(args?: {
+    where?: QuestionWhereInput;
+    orderBy?: QuestionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
-export interface PlayerSubscription
-  extends Promise<AsyncIterator<Player>>,
+export interface GameSubscription
+  extends Promise<AsyncIterator<Game>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  password: () => Promise<AsyncIterator<String>>;
-  points: () => Promise<AsyncIterator<Int>>;
+  players: <T = Promise<AsyncIterator<PlayerSubscription>>>(args?: {
+    where?: PlayerWhereInput;
+    orderBy?: PlayerOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  maxPlayers: () => Promise<AsyncIterator<Int>>;
+  questions: <T = Promise<AsyncIterator<QuestionSubscription>>>(args?: {
+    where?: QuestionWhereInput;
+    orderBy?: QuestionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
-export interface PlayerNullablePromise
-  extends Promise<Player | null>,
+export interface GameNullablePromise
+  extends Promise<Game | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  password: () => Promise<String>;
-  points: () => Promise<Int>;
+  players: <T = FragmentableArray<Player>>(args?: {
+    where?: PlayerWhereInput;
+    orderBy?: PlayerOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  maxPlayers: () => Promise<Int>;
+  questions: <T = FragmentableArray<Question>>(args?: {
+    where?: QuestionWhereInput;
+    orderBy?: QuestionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface PlayerConnection {
+  pageInfo: PageInfo;
+  edges: PlayerEdge[];
+}
+
+export interface PlayerConnectionPromise
+  extends Promise<PlayerConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PlayerEdge>>() => T;
+  aggregate: <T = AggregatePlayerPromise>() => T;
+}
+
+export interface PlayerConnectionSubscription
+  extends Promise<AsyncIterator<PlayerConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PlayerEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePlayerSubscription>() => T;
+}
+
+export interface PlayerSubscriptionPayload {
+  mutation: MutationType;
+  node: Player;
+  updatedFields: String[];
+  previousValues: PlayerPreviousValues;
+}
+
+export interface PlayerSubscriptionPayloadPromise
+  extends Promise<PlayerSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = PlayerPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = PlayerPreviousValuesPromise>() => T;
+}
+
+export interface PlayerSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PlayerSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PlayerSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = PlayerPreviousValuesSubscription>() => T;
 }
 
 export interface Question {
@@ -594,48 +1161,64 @@ export interface QuestionNullablePromise
   answers: () => Promise<String[]>;
 }
 
-export interface QuestionEdge {
-  node: Question;
-  cursor: String;
+export interface GamePreviousValues {
+  id: ID_Output;
+  maxPlayers?: Int;
 }
 
-export interface QuestionEdgePromise
-  extends Promise<QuestionEdge>,
+export interface GamePreviousValuesPromise
+  extends Promise<GamePreviousValues>,
     Fragmentable {
-  node: <T = QuestionPromise>() => T;
-  cursor: () => Promise<String>;
+  id: () => Promise<ID_Output>;
+  maxPlayers: () => Promise<Int>;
 }
 
-export interface QuestionEdgeSubscription
-  extends Promise<AsyncIterator<QuestionEdge>>,
+export interface GamePreviousValuesSubscription
+  extends Promise<AsyncIterator<GamePreviousValues>>,
     Fragmentable {
-  node: <T = QuestionSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  maxPlayers: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface QuestionSubscriptionPayload {
+export interface GameSubscriptionPayload {
   mutation: MutationType;
-  node: Question;
+  node: Game;
   updatedFields: String[];
-  previousValues: QuestionPreviousValues;
+  previousValues: GamePreviousValues;
 }
 
-export interface QuestionSubscriptionPayloadPromise
-  extends Promise<QuestionSubscriptionPayload>,
+export interface GameSubscriptionPayloadPromise
+  extends Promise<GameSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = QuestionPromise>() => T;
+  node: <T = GamePromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = QuestionPreviousValuesPromise>() => T;
+  previousValues: <T = GamePreviousValuesPromise>() => T;
 }
 
-export interface QuestionSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<QuestionSubscriptionPayload>>,
+export interface GameSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<GameSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = QuestionSubscription>() => T;
+  node: <T = GameSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = QuestionPreviousValuesSubscription>() => T;
+  previousValues: <T = GamePreviousValuesSubscription>() => T;
+}
+
+export interface AggregateGame {
+  count: Int;
+}
+
+export interface AggregateGamePromise
+  extends Promise<AggregateGame>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateGameSubscription
+  extends Promise<AsyncIterator<AggregateGame>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface PlayerEdge {
@@ -655,55 +1238,119 @@ export interface PlayerEdgeSubscription
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregatePlayer {
+export interface QuestionConnection {
+  pageInfo: PageInfo;
+  edges: QuestionEdge[];
+}
+
+export interface QuestionConnectionPromise
+  extends Promise<QuestionConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<QuestionEdge>>() => T;
+  aggregate: <T = AggregateQuestionPromise>() => T;
+}
+
+export interface QuestionConnectionSubscription
+  extends Promise<AsyncIterator<QuestionConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<QuestionEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateQuestionSubscription>() => T;
+}
+
+export interface AggregateQuestion {
   count: Int;
 }
 
-export interface AggregatePlayerPromise
-  extends Promise<AggregatePlayer>,
+export interface AggregateQuestionPromise
+  extends Promise<AggregateQuestion>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregatePlayerSubscription
-  extends Promise<AsyncIterator<AggregatePlayer>>,
+export interface AggregateQuestionSubscription
+  extends Promise<AsyncIterator<AggregateQuestion>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface BatchPayload {
-  count: Long;
+export interface Player {
+  id: ID_Output;
+  name: String;
+  password: String;
+  points?: Int;
 }
 
-export interface BatchPayloadPromise
-  extends Promise<BatchPayload>,
+export interface PlayerPromise extends Promise<Player>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  password: () => Promise<String>;
+  points: () => Promise<Int>;
+  games: <T = FragmentableArray<Game>>(args?: {
+    where?: GameWhereInput;
+    orderBy?: GameOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface PlayerSubscription
+  extends Promise<AsyncIterator<Player>>,
     Fragmentable {
-  count: () => Promise<Long>;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+  points: () => Promise<AsyncIterator<Int>>;
+  games: <T = Promise<AsyncIterator<GameSubscription>>>(args?: {
+    where?: GameWhereInput;
+    orderBy?: GameOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayload>>,
+export interface PlayerNullablePromise
+  extends Promise<Player | null>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  password: () => Promise<String>;
+  points: () => Promise<Int>;
+  games: <T = FragmentableArray<Game>>(args?: {
+    where?: GameWhereInput;
+    orderBy?: GameOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
-
-/*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-*/
-export type Int = number;
-
-/*
-The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
-*/
-export type ID_Input = string | number;
-export type ID_Output = string;
 
 /*
 The `Boolean` scalar type represents `true` or `false`.
 */
 export type Boolean = boolean;
 
+/*
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+*/
+export type Int = number;
+
 export type Long = string;
+
+/*
+The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+*/
+export type ID_Input = string | number;
+export type ID_Output = string;
 
 /*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
@@ -721,6 +1368,10 @@ export const models: Model[] = [
   },
   {
     name: "Question",
+    embedded: false
+  },
+  {
+    name: "Game",
     embedded: false
   }
 ];

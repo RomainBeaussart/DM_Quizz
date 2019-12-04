@@ -9,9 +9,10 @@
                 <v-flex xs2 class="d-flex justify-center">
                 </v-flex>
                 <v-flex xs8 class="d-flex justify-center">
-                    <span 
+                    <span
                         @click="$router.push({ name: 'home'})"
-                        class="title" style="cursor: pointer"
+                        class="title"
+                        style="cursor: pointer"
                     >
                         DM Quizz<v-icon>quizz</v-icon></span>
                 </v-flex>

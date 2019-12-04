@@ -1,3 +1,7 @@
+type AggregateGame {
+  count: Int!
+}
+
 type AggregatePlayer {
   count: Int!
 }
@@ -10,9 +14,194 @@ type BatchPayload {
   count: Long!
 }
 
+type Game {
+  id: ID!
+  players(where: PlayerWhereInput, orderBy: PlayerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Player!]
+  maxPlayers: Int
+  questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
+}
+
+type GameConnection {
+  pageInfo: PageInfo!
+  edges: [GameEdge]!
+  aggregate: AggregateGame!
+}
+
+input GameCreateInput {
+  id: ID
+  players: PlayerCreateManyWithoutGamesInput
+  maxPlayers: Int
+  questions: QuestionCreateManyInput
+}
+
+input GameCreateManyWithoutPlayersInput {
+  create: [GameCreateWithoutPlayersInput!]
+  connect: [GameWhereUniqueInput!]
+}
+
+input GameCreateWithoutPlayersInput {
+  id: ID
+  maxPlayers: Int
+  questions: QuestionCreateManyInput
+}
+
+type GameEdge {
+  node: Game!
+  cursor: String!
+}
+
+enum GameOrderByInput {
+  id_ASC
+  id_DESC
+  maxPlayers_ASC
+  maxPlayers_DESC
+}
+
+type GamePreviousValues {
+  id: ID!
+  maxPlayers: Int
+}
+
+input GameScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  maxPlayers: Int
+  maxPlayers_not: Int
+  maxPlayers_in: [Int!]
+  maxPlayers_not_in: [Int!]
+  maxPlayers_lt: Int
+  maxPlayers_lte: Int
+  maxPlayers_gt: Int
+  maxPlayers_gte: Int
+  AND: [GameScalarWhereInput!]
+  OR: [GameScalarWhereInput!]
+  NOT: [GameScalarWhereInput!]
+}
+
+type GameSubscriptionPayload {
+  mutation: MutationType!
+  node: Game
+  updatedFields: [String!]
+  previousValues: GamePreviousValues
+}
+
+input GameSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: GameWhereInput
+  AND: [GameSubscriptionWhereInput!]
+  OR: [GameSubscriptionWhereInput!]
+  NOT: [GameSubscriptionWhereInput!]
+}
+
+input GameUpdateInput {
+  players: PlayerUpdateManyWithoutGamesInput
+  maxPlayers: Int
+  questions: QuestionUpdateManyInput
+}
+
+input GameUpdateManyDataInput {
+  maxPlayers: Int
+}
+
+input GameUpdateManyMutationInput {
+  maxPlayers: Int
+}
+
+input GameUpdateManyWithoutPlayersInput {
+  create: [GameCreateWithoutPlayersInput!]
+  delete: [GameWhereUniqueInput!]
+  connect: [GameWhereUniqueInput!]
+  set: [GameWhereUniqueInput!]
+  disconnect: [GameWhereUniqueInput!]
+  update: [GameUpdateWithWhereUniqueWithoutPlayersInput!]
+  upsert: [GameUpsertWithWhereUniqueWithoutPlayersInput!]
+  deleteMany: [GameScalarWhereInput!]
+  updateMany: [GameUpdateManyWithWhereNestedInput!]
+}
+
+input GameUpdateManyWithWhereNestedInput {
+  where: GameScalarWhereInput!
+  data: GameUpdateManyDataInput!
+}
+
+input GameUpdateWithoutPlayersDataInput {
+  maxPlayers: Int
+  questions: QuestionUpdateManyInput
+}
+
+input GameUpdateWithWhereUniqueWithoutPlayersInput {
+  where: GameWhereUniqueInput!
+  data: GameUpdateWithoutPlayersDataInput!
+}
+
+input GameUpsertWithWhereUniqueWithoutPlayersInput {
+  where: GameWhereUniqueInput!
+  update: GameUpdateWithoutPlayersDataInput!
+  create: GameCreateWithoutPlayersInput!
+}
+
+input GameWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  players_every: PlayerWhereInput
+  players_some: PlayerWhereInput
+  players_none: PlayerWhereInput
+  maxPlayers: Int
+  maxPlayers_not: Int
+  maxPlayers_in: [Int!]
+  maxPlayers_not_in: [Int!]
+  maxPlayers_lt: Int
+  maxPlayers_lte: Int
+  maxPlayers_gt: Int
+  maxPlayers_gte: Int
+  questions_every: QuestionWhereInput
+  questions_some: QuestionWhereInput
+  questions_none: QuestionWhereInput
+  AND: [GameWhereInput!]
+  OR: [GameWhereInput!]
+  NOT: [GameWhereInput!]
+}
+
+input GameWhereUniqueInput {
+  id: ID
+}
+
 scalar Long
 
 type Mutation {
+  createGame(data: GameCreateInput!): Game!
+  updateGame(data: GameUpdateInput!, where: GameWhereUniqueInput!): Game
+  updateManyGames(data: GameUpdateManyMutationInput!, where: GameWhereInput): BatchPayload!
+  upsertGame(where: GameWhereUniqueInput!, create: GameCreateInput!, update: GameUpdateInput!): Game!
+  deleteGame(where: GameWhereUniqueInput!): Game
+  deleteManyGames(where: GameWhereInput): BatchPayload!
   createPlayer(data: PlayerCreateInput!): Player!
   updatePlayer(data: PlayerUpdateInput!, where: PlayerWhereUniqueInput!): Player
   updateManyPlayers(data: PlayerUpdateManyMutationInput!, where: PlayerWhereInput): BatchPayload!
@@ -49,6 +238,7 @@ type Player {
   name: String!
   password: String!
   points: Int
+  games(where: GameWhereInput, orderBy: GameOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Game!]
 }
 
 type PlayerConnection {
@@ -58,6 +248,19 @@ type PlayerConnection {
 }
 
 input PlayerCreateInput {
+  id: ID
+  name: String!
+  password: String!
+  points: Int
+  games: GameCreateManyWithoutPlayersInput
+}
+
+input PlayerCreateManyWithoutGamesInput {
+  create: [PlayerCreateWithoutGamesInput!]
+  connect: [PlayerWhereUniqueInput!]
+}
+
+input PlayerCreateWithoutGamesInput {
   id: ID
   name: String!
   password: String!
@@ -87,6 +290,62 @@ type PlayerPreviousValues {
   points: Int
 }
 
+input PlayerScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  password: String
+  password_not: String
+  password_in: [String!]
+  password_not_in: [String!]
+  password_lt: String
+  password_lte: String
+  password_gt: String
+  password_gte: String
+  password_contains: String
+  password_not_contains: String
+  password_starts_with: String
+  password_not_starts_with: String
+  password_ends_with: String
+  password_not_ends_with: String
+  points: Int
+  points_not: Int
+  points_in: [Int!]
+  points_not_in: [Int!]
+  points_lt: Int
+  points_lte: Int
+  points_gt: Int
+  points_gte: Int
+  AND: [PlayerScalarWhereInput!]
+  OR: [PlayerScalarWhereInput!]
+  NOT: [PlayerScalarWhereInput!]
+}
+
 type PlayerSubscriptionPayload {
   mutation: MutationType!
   node: Player
@@ -109,12 +368,53 @@ input PlayerUpdateInput {
   name: String
   password: String
   points: Int
+  games: GameUpdateManyWithoutPlayersInput
+}
+
+input PlayerUpdateManyDataInput {
+  name: String
+  password: String
+  points: Int
 }
 
 input PlayerUpdateManyMutationInput {
   name: String
   password: String
   points: Int
+}
+
+input PlayerUpdateManyWithoutGamesInput {
+  create: [PlayerCreateWithoutGamesInput!]
+  delete: [PlayerWhereUniqueInput!]
+  connect: [PlayerWhereUniqueInput!]
+  set: [PlayerWhereUniqueInput!]
+  disconnect: [PlayerWhereUniqueInput!]
+  update: [PlayerUpdateWithWhereUniqueWithoutGamesInput!]
+  upsert: [PlayerUpsertWithWhereUniqueWithoutGamesInput!]
+  deleteMany: [PlayerScalarWhereInput!]
+  updateMany: [PlayerUpdateManyWithWhereNestedInput!]
+}
+
+input PlayerUpdateManyWithWhereNestedInput {
+  where: PlayerScalarWhereInput!
+  data: PlayerUpdateManyDataInput!
+}
+
+input PlayerUpdateWithoutGamesDataInput {
+  name: String
+  password: String
+  points: Int
+}
+
+input PlayerUpdateWithWhereUniqueWithoutGamesInput {
+  where: PlayerWhereUniqueInput!
+  data: PlayerUpdateWithoutGamesDataInput!
+}
+
+input PlayerUpsertWithWhereUniqueWithoutGamesInput {
+  where: PlayerWhereUniqueInput!
+  update: PlayerUpdateWithoutGamesDataInput!
+  create: PlayerCreateWithoutGamesInput!
 }
 
 input PlayerWhereInput {
@@ -168,6 +468,9 @@ input PlayerWhereInput {
   points_lte: Int
   points_gt: Int
   points_gte: Int
+  games_every: GameWhereInput
+  games_some: GameWhereInput
+  games_none: GameWhereInput
   AND: [PlayerWhereInput!]
   OR: [PlayerWhereInput!]
   NOT: [PlayerWhereInput!]
@@ -175,9 +478,13 @@ input PlayerWhereInput {
 
 input PlayerWhereUniqueInput {
   id: ID
+  name: String
 }
 
 type Query {
+  game(where: GameWhereUniqueInput!): Game
+  games(where: GameWhereInput, orderBy: GameOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Game]!
+  gamesConnection(where: GameWhereInput, orderBy: GameOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GameConnection!
   player(where: PlayerWhereUniqueInput!): Player
   players(where: PlayerWhereInput, orderBy: PlayerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Player]!
   playersConnection(where: PlayerWhereInput, orderBy: PlayerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PlayerConnection!
@@ -213,6 +520,11 @@ input QuestionCreateInput {
   answers: QuestionCreateanswersInput
 }
 
+input QuestionCreateManyInput {
+  create: [QuestionCreateInput!]
+  connect: [QuestionWhereUniqueInput!]
+}
+
 type QuestionEdge {
   node: Question!
   cursor: String!
@@ -237,6 +549,68 @@ type QuestionPreviousValues {
   answers: [String!]!
 }
 
+input QuestionScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  category: String
+  category_not: String
+  category_in: [String!]
+  category_not_in: [String!]
+  category_lt: String
+  category_lte: String
+  category_gt: String
+  category_gte: String
+  category_contains: String
+  category_not_contains: String
+  category_starts_with: String
+  category_not_starts_with: String
+  category_ends_with: String
+  category_not_ends_with: String
+  question: String
+  question_not: String
+  question_in: [String!]
+  question_not_in: [String!]
+  question_lt: String
+  question_lte: String
+  question_gt: String
+  question_gte: String
+  question_contains: String
+  question_not_contains: String
+  question_starts_with: String
+  question_not_starts_with: String
+  question_ends_with: String
+  question_not_ends_with: String
+  correctAnswer: String
+  correctAnswer_not: String
+  correctAnswer_in: [String!]
+  correctAnswer_not_in: [String!]
+  correctAnswer_lt: String
+  correctAnswer_lte: String
+  correctAnswer_gt: String
+  correctAnswer_gte: String
+  correctAnswer_contains: String
+  correctAnswer_not_contains: String
+  correctAnswer_starts_with: String
+  correctAnswer_not_starts_with: String
+  correctAnswer_ends_with: String
+  correctAnswer_not_ends_with: String
+  AND: [QuestionScalarWhereInput!]
+  OR: [QuestionScalarWhereInput!]
+  NOT: [QuestionScalarWhereInput!]
+}
+
 type QuestionSubscriptionPayload {
   mutation: MutationType!
   node: Question
@@ -259,6 +633,13 @@ input QuestionUpdateanswersInput {
   set: [String!]
 }
 
+input QuestionUpdateDataInput {
+  category: String
+  question: String
+  correctAnswer: String
+  answers: QuestionUpdateanswersInput
+}
+
 input QuestionUpdateInput {
   category: String
   question: String
@@ -266,11 +647,46 @@ input QuestionUpdateInput {
   answers: QuestionUpdateanswersInput
 }
 
+input QuestionUpdateManyDataInput {
+  category: String
+  question: String
+  correctAnswer: String
+  answers: QuestionUpdateanswersInput
+}
+
+input QuestionUpdateManyInput {
+  create: [QuestionCreateInput!]
+  update: [QuestionUpdateWithWhereUniqueNestedInput!]
+  upsert: [QuestionUpsertWithWhereUniqueNestedInput!]
+  delete: [QuestionWhereUniqueInput!]
+  connect: [QuestionWhereUniqueInput!]
+  set: [QuestionWhereUniqueInput!]
+  disconnect: [QuestionWhereUniqueInput!]
+  deleteMany: [QuestionScalarWhereInput!]
+  updateMany: [QuestionUpdateManyWithWhereNestedInput!]
+}
+
 input QuestionUpdateManyMutationInput {
   category: String
   question: String
   correctAnswer: String
   answers: QuestionUpdateanswersInput
+}
+
+input QuestionUpdateManyWithWhereNestedInput {
+  where: QuestionScalarWhereInput!
+  data: QuestionUpdateManyDataInput!
+}
+
+input QuestionUpdateWithWhereUniqueNestedInput {
+  where: QuestionWhereUniqueInput!
+  data: QuestionUpdateDataInput!
+}
+
+input QuestionUpsertWithWhereUniqueNestedInput {
+  where: QuestionWhereUniqueInput!
+  update: QuestionUpdateDataInput!
+  create: QuestionCreateInput!
 }
 
 input QuestionWhereInput {
@@ -340,6 +756,7 @@ input QuestionWhereUniqueInput {
 }
 
 type Subscription {
+  game(where: GameSubscriptionWhereInput): GameSubscriptionPayload
   player(where: PlayerSubscriptionWhereInput): PlayerSubscriptionPayload
   question(where: QuestionSubscriptionWhereInput): QuestionSubscriptionPayload
 }

@@ -1,5 +1,0 @@
-query Games ($id:ID!){
-    games(where: {
-        player_in: {id: $id }
-    })
-}
