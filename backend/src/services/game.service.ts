@@ -30,8 +30,7 @@ export const createGame = (id: number, io, users: User[], questions: Question[],
 export const listen = (game: Game) => {
   game.socketNamespace.on('connection', (socket) => {
     socket.on('new_player', (user: User) => {
-      game.socketNamespace.emit('player_is_online', createPlayer(user))
-      
+      game.socketNamespace.emit('is_online', createPlayer(user))
     })
 
     socket.on('disconnect', (player: Player) => {

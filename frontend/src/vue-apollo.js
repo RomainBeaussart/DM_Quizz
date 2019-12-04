@@ -1,6 +1,6 @@
 import VueApollo from 'vue-apollo'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client'
+import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 
 // Name of the localStorage item
 const AUTH_TOKEN = 'apollo-token'
@@ -75,7 +75,6 @@ export function createProvider (options = {}) {
       console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
     }
   })
-
   return apolloProvider
 }
 
