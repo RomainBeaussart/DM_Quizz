@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid class="container">
+    <v-container fluid class="container" v-on:keyup.page-down="switchValue()">
       <v-row class="row1" v-if="!error">
         <v-col cols="2">
           <v-card
@@ -37,6 +37,17 @@
       </v-row>
       <v-row class="row2" v-if="!error">
           <v-form class="form" @submit.prevent="emitChatMessage">
+            <div class="switch-container">
+              <span v-if="isAnswer">ANSWER</span>
+              <span v-else>TEXT</span>
+              <v-switch 
+                inset 
+                color="primary" 
+                v-model="isAnswer" 
+                class="switch" 
+                label="press 'page-down'"
+              ></v-switch>
+            </div>
             <v-text-field
               v-model="userInput"
               placeholder="Placeholder"
@@ -71,7 +82,9 @@ const systemName = 'DM-Quiz System'
 
 enum MessageType {
   SYSTEM = 'system',
-  TEXT = 'text'
+  TEXT = 'text',
+  QUESTION = 'question',
+  WINNER = 'winner'
 }
 
 interface Message {
@@ -88,11 +101,21 @@ function isOnlineMsg (playerName: String): Message {
   }
 }
 
+function isOfflineMsg (playerName: String): Message {
+  return {
+    sender: systemName,
+    text: `player ${playerName} has been disconnected.`,
+    type: MessageType.SYSTEM
+  }
+}
+
 
 @Component
 export default class Chat extends Vue {
    @Prop(Number) readonly chatID: number | undefined
   chatSocket = null
+
+  isAnswer: boolean = false
 
   players: Array<object> = []
   messages: Array<Message> = []
@@ -114,11 +137,18 @@ export default class Chat extends Vue {
         this.chatSocket = createSocket('1')
 
         // we new player join the game
-        this.chatSocket.on('is_online', (player) => {
+        this.chatSocket.on('is_online', (player: any) => {
           this.players.push(player)
           this.messages.push(isOnlineMsg(player.user.name))
         })
 
+        // a player is offline
+        this.chatSocket.on('is_offline', (user) => {
+          this.players = this.players.filter((player: any) => player.user.name = user.name)
+          this.messages.push(isOfflineMsg(user.name))
+        })
+
+        // receive chat message
         this.chatSocket.on('chat_message', (message: String, user) => {
           const displayMsg: Message = {
             sender: user.name,
@@ -128,8 +158,84 @@ export default class Chat extends Vue {
           this.messages.push(displayMsg)
         })
 
-        this.chatSocket.emit('new_player', this.$store.state.user)
+        // the game are going to start
+        this.chatSocket.on('start', () => {
+          this.messages.push({
+            sender: systemName,
+            text: 'the game are going to start !',
+            type: MessageType.SYSTEM
+          })
+        })
 
+        // receive a question
+        this.chatSocket.on('new_question', (question) => {
+          this.messages.push({
+            sender: systemName,
+            text: 'new question ! 20 seconds to answer it !',
+            type: MessageType.SYSTEM
+          })
+          this.messages.push({
+            sender: systemName,
+            text: `${question.question} (${question.category})`,
+            type: MessageType.QUESTION
+          })
+        })
+
+        // answer rejected
+        this.chatSocket.on('answer_rejected', (user) => {
+          console.log(user)
+          this.messages.push({
+            sender: systemName,
+            text: `The ${user.name}'s answer has been rejected.`,
+            type: MessageType.SYSTEM
+          })
+        })
+
+        // answer accepted
+        this.chatSocket.on('answer_accepted', (user) => {
+          console.log(user)
+          this.messages.push({
+            sender: systemName,
+            text: `The ${user.name}'s answer has been accepted.`,
+            type: MessageType.SYSTEM
+          })
+        })
+
+        // receive the results for the last question
+        this.chatSocket.on('results', (rewards: any) => {
+          this.messages.push({
+            sender: systemName,
+            text: 'Results are...',
+            type: MessageType.SYSTEM
+          })
+          console.log(rewards)
+          if (rewards) {
+            this.messages.push({
+              sender: systemName,
+              text: `${rewards}`,
+              type: MessageType.SYSTEM
+            })
+          } else {
+            this.messages.push({
+              sender: systemName,
+              text: 'nobody answer to the question',
+              type: MessageType.SYSTEM
+            })
+          }
+           
+        })
+
+        // end of game event
+        this.chatSocket.on('end_of_game', (winner) => {
+          this.messages.push({
+            sender: systemName,
+            text: `END OF GAME !! The winner is ${winner.user.name} with ${winner.points} points.`, 
+            type: MessageType.WINNER
+          })
+        })
+
+        // join the game instance
+        this.chatSocket.emit('new_player', this.$store.state.user)
       } else {
         this.error = 'server error'
       }
@@ -139,9 +245,16 @@ export default class Chat extends Vue {
   }
 
   emitChatMessage() {
-    console.log('chat message emmission')
-    this.chatSocket.emit('chat_message', this.userInput, this.$store.state.user)
+    if (this.isAnswer) {
+      this.chatSocket.emit('answer', this.userInput, this.$store.state.user)
+    } else {
+      this.chatSocket.emit('chat_message', this.userInput, this.$store.state.user)
+    }
     this.userInput = null
+  }
+
+  switchValue () {
+    this.isAnswer = !this.isAnswer
   }
 }
 
@@ -187,6 +300,20 @@ export default class Chat extends Vue {
   width: 100%;
   display: flex;
   flex-direction: row;
+}
+
+.switch {
+  margin-top: 0;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.switch-container {
+  margin-right: 2%;
+  margin-left: 1%; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 </style>

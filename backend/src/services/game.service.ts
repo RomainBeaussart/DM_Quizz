@@ -23,30 +23,72 @@ export const createGame = (id: number, io, users: User[], questions: Question[],
   start: false
 })
 
+function handleNextQuestion (game: Game) {
+  if (game.questions.length > 0) {
+    const question = getQuestion(game)
+    game.waitForAnswers = true
+    game.socketNamespace.emit('new_question', question)
+    setTimeout(() => {
+      game.waitForAnswers = false
+      game.socketNamespace.emit('results', getRewards(game))
+      setTimeout(() => handleNextQuestion(game), 5000)
+    }, 26000)
+  } else {
+    // end of game
+    game.socketNamespace.emit('end_of_game', getWinner(game))
+  }
+}
+
 /**
  * listen on game's socket namespace
  * @param game game
  */
 export const listen = (game: Game) => {
   game.socketNamespace.on('connection', (socket) => {
+
+    // new player join the game
     socket.on('new_player', (user: User) => {
-      game.socketNamespace.emit('is_online', createPlayer(user))
+      const newPlayer = createPlayer(user)
+
+      // add the player to the game object
+      if (!game.start && !game.players.map(_ => _.user.name).includes(newPlayer.user.name)) {
+        game.players.push(newPlayer)
+      }
+
+      // notify the other players by emitting 'is_online'
+      game.socketNamespace.emit('is_online', newPlayer)
+
+      // start the game if the maxPlayers number = length of players array
+      if (game.players.length === game.maxPlayers) {
+        game.socketNamespace.emit('start')
+        setTimeout(() => {
+          game.start = true
+          handleNextQuestion(game)
+        }, 2000)
+      }
     })
 
+    // a player quits the game
     socket.on('disconnect', (user: User) => {
-      game.socketNamespace.emit('player_is_offline', user)
+      game.players = game.players.filter((player: Player) => player.user.name !== user.name)
+      game.socketNamespace.emit('is_offline', user)
     })
 
     socket.on('chat_message', (message: string, user: User) => {
       game.socketNamespace.emit('chat_message', message, user)
     })
 
-    socket.on('answer', (answer: string, player: Player) => {
+    socket.on('answer', (answer: string, user: User) => {
       if (game.waitForAnswers) {
+        const player: Player = game.players.find((player: Player) => player.user.id === user.id)
+
         game.answers.set(player, answer)
         if (game.answers.values.length === game.players.length) {
-          const rewards: Map<Player, Reward> = getRewards(game)
+          game.waitForAnswers = false
         }
+        game.socketNamespace.emit('answer_accepted', user)
+      } else {
+        game.socketNamespace.emit('answer_rejected', user)
       }
     })
   })
