@@ -20,42 +20,37 @@
         </v-col>
         <v-col cols="10">
           <v-card
-          class="mx-auto card overflow-y-auto"
+          class="mx-auto card"
           outlined
           >
-            <v-list-item
-              v-for="(msg, index) in messages" 
-              :key="index"
-            >
-              <v-list-item-content>
-                <p><b>{{msg.sender}}:</b> {{msg.text}}</p>
-              </v-list-item-content>
-            </v-list-item>
+            <ul class="messages" v-chat-scroll="{always: false, smooth: true}">
+              <li 
+                v-for="(msg, index) in messages" 
+                :key="index"
+              >
+                <p><b>{{msg.sender}} ({{msg.type}}):</b> {{msg.text}}</p>
+              </li>
+            </ul>
             
           </v-card>
         </v-col>
       </v-row>
       <v-row class="row2" v-if="!error">
-        <v-col cols="10">
-          <v-form>
+          <v-form class="form" @submit.prevent="emitChatMessage">
             <v-text-field
               v-model="userInput"
               placeholder="Placeholder"
               outlined
+              class="input-field"
               required
             ></v-text-field>
-          </v-form>
-        </v-col>
-        <v-col cols="2">
-          <div>
-           <v-btn 
-            @click="emitChatMessage"
+            <v-btn 
+            type="submit"
             large 
             class="btn" 
             color="primary"
            >Send</v-btn>
-          </div>
-        </v-col>
+          </v-form>
       </v-row>
       <v-row v-if="error">
         <v-col cols=12>
@@ -72,16 +67,38 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import createSocket from '../socket/chatSocket'
 const axios = require('axios')
 
+const systemName = 'DM-Quiz System'
+
+enum MessageType {
+  SYSTEM = 'system',
+  TEXT = 'text'
+}
+
+interface Message {
+  sender: String;
+  text: String;
+  type: MessageType;
+}
+
+function isOnlineMsg (playerName: String): Message {
+  return {
+    sender: systemName,
+    text: `player ${playerName} join the chat.`,
+    type: MessageType.SYSTEM
+  }
+}
+
+
 @Component
 export default class Chat extends Vue {
    @Prop(Number) readonly chatID: number | undefined
-  chatSocket
+  chatSocket = null
 
   players: Array<object> = []
-  messages: Array<object> = []
+  messages: Array<Message> = []
 
-  points = 0
-  userInput = null
+  points: Number = 0
+  userInput: String = null
 
   error = null
 
@@ -95,14 +112,18 @@ export default class Chat extends Vue {
 
       if (res.status === 200) {
         this.chatSocket = createSocket('1')
+
+        // we new player join the game
         this.chatSocket.on('is_online', (player) => {
           this.players.push(player)
+          this.messages.push(isOnlineMsg(player.user.name))
         })
 
         this.chatSocket.on('chat_message', (message: String, user) => {
-          const displayMsg = {
+          const displayMsg: Message = {
             sender: user.name,
-            text: message
+            text: message,
+            type: MessageType.TEXT
           }
           this.messages.push(displayMsg)
         })
@@ -120,6 +141,7 @@ export default class Chat extends Vue {
   emitChatMessage() {
     console.log('chat message emmission')
     this.chatSocket.emit('chat_message', this.userInput, this.$store.state.user)
+    this.userInput = null
   }
 }
 
@@ -128,21 +150,43 @@ export default class Chat extends Vue {
 <style>
 .container {
   height: 100%;
-}
-
-.btn {
-  width: 100%;
-  height: 100%;
-}
-
-.card {
-  max-height: 410px;
+  display: flex;
+  flex-direction: column;
 }
 
 .row1 {
+  flex-grow: 10;
 }
 
 .row2 {
+  flex-grow: 1;
+}
+
+.btn {
+  margin-left: 2%;
+}
+
+.card {
+  max-height: 420px;
+  height: 420px;
+}
+
+.messages {
+  height: 400px;
+  overflow-y: scroll;
+  list-style: none;
+  margin: 15px;
+}
+
+.input-field {
+  margin: 20px;
+}
+
+.form {
+  margin: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 </style>
