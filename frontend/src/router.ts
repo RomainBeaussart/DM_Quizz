@@ -18,7 +18,7 @@ const router = new Router({
         children: [
           { path: '/', name: 'login', component: Login },
           { path: '/chats', name: 'chats', component: Chats },
-          { path: '/chat', name: 'chat', component: Chat, props: true }
+          { path: '/chat', name: 'chat', component: Chat }
         ]
     },
 ],
