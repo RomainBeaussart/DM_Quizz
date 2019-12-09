@@ -12,7 +12,7 @@
               :key="index"  
             >
               <v-list-item-content>
-                <v-list-item-title>{{player.name}}</v-list-item-title>
+                <v-list-item-title>{{player.user.name}}</v-list-item-title>
                 <v-list-item-subtitle>Points: {{player.points}}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -74,10 +74,11 @@ const axios = require('axios')
 
 @Component
 export default class Chat extends Vue {
-  chatSocket = createSocket('1')
+   @Prop(Number) readonly chatID: number | undefined
+  chatSocket
 
-  players = []
-  messages = []
+  players: Array<object> = []
+  messages: Array<object> = []
 
   points = 0
   userInput = null
@@ -85,32 +86,29 @@ export default class Chat extends Vue {
   error = null
 
   async mounted() {
-    console.log('Mounted function')
-
     let res = null
-
     try {
       res = await axios.post('http://localhost:4000/dmquizz', {
         user: this.$store.state.user,
-        gameConfig: { maxPlayers: 1 }
+        config: { maxPlayers: 1 }
       })
 
       if (res.status === 200) {
-
-        this.chatSocket.on('is_online', function (player) {
+        this.chatSocket = createSocket('1')
+        this.chatSocket.on('is_online', (player) => {
           this.players.push(player)
         })
 
-        this.chatSocket.on('chat_message', function (message: String, player) {
+        this.chatSocket.on('chat_message', (message: String, user) => {
           const displayMsg = {
-            sender: player.user.name,
+            sender: user.name,
             text: message
           }
           this.messages.push(displayMsg)
         })
 
         this.chatSocket.emit('new_player', this.$store.state.user)
-        
+
       } else {
         this.error = 'server error'
       }

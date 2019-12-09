@@ -33,12 +33,12 @@ export const listen = (game: Game) => {
       game.socketNamespace.emit('is_online', createPlayer(user))
     })
 
-    socket.on('disconnect', (player: Player) => {
-      game.socketNamespace.emit('player_is_offline', player)
+    socket.on('disconnect', (user: User) => {
+      game.socketNamespace.emit('player_is_offline', user)
     })
 
-    socket.on('chat_message', (message: string, player: Player) => {
-      game.socketNamespace.emit('chat_message', `${player.user.name}: ${message}`)
+    socket.on('chat_message', (message: string, user: User) => {
+      game.socketNamespace.emit('chat_message', message, user)
     })
 
     socket.on('answer', (answer: string, player: Player) => {
