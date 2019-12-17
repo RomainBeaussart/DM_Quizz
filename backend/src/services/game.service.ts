@@ -23,6 +23,10 @@ export const createGame = (id: number, io, users: User[], questions: Question[],
   start: false
 })
 
+/**
+ * Handle the next question of a game object given as parameter.
+ * @param game the game
+ */
 function handleNextQuestion (game: Game) {
   if (game.questions.length > 0) {
     const question = getQuestion(game)
@@ -30,7 +34,9 @@ function handleNextQuestion (game: Game) {
     game.socketNamespace.emit('new_question', question)
     setTimeout(() => {
       game.waitForAnswers = false
-      game.socketNamespace.emit('results', getRewards(game))
+      const rewards: Map<Player, number> = getRewards(game)
+      const results: Array<Player> = applyRewards(rewards, game)
+      game.socketNamespace.emit('results', results)
       setTimeout(() => handleNextQuestion(game), 5000)
     }, 26000)
   } else {
@@ -66,6 +72,7 @@ export const listen = (game: Game) => {
           handleNextQuestion(game)
         }, 2000)
       }
+
     })
 
     // a player quits the game
@@ -74,12 +81,14 @@ export const listen = (game: Game) => {
       game.socketNamespace.emit('is_offline', user)
     })
 
+    /** Basic chat message */
     socket.on('chat_message', (message: string, user: User) => {
       game.socketNamespace.emit('chat_message', message, user)
     })
 
+    /** answer to a question */
     socket.on('answer', (answer: string, user: User) => {
-      if (game.waitForAnswers) {
+      if (game.waitForAnswers && answer) {
         const player: Player = game.players.find((player: Player) => player.user.id === user.id)
 
         game.answers.set(player, answer)
@@ -134,16 +143,36 @@ const calculateReward = (correctAnswer: string, playerAnswer: string): Reward =>
 }
 
 /**
+ * Apply the rewards to the game object given as parameter.
+ * @param rewards rewards map.
+ * @param game the game object to apply rewards.
+ */
+function applyRewards (rewards: Map<Player, number>, game: Game): Array<Player> {
+  const rewardedPlayers: Array<Player> = []
+  rewards.forEach((value: number, key: Player) => {
+    if (value > 0) {
+      const thePlayer = game.players.find((player: Player) => player.user.id === key.user.id)
+      thePlayer.points += value
+      rewardedPlayers.push(thePlayer)
+    }
+  })
+  return rewardedPlayers
+}
+
+/**
  * returns the rewards given to players in function of their answers.
  * @param game
  */
-export const getRewards = (game: Game): Map<Player, Reward> => {
+const getRewards = (game: Game): Map<Player, Reward> => {
   const rewardsMap = new Map<Player, Reward>()
   const question = getCurrentQuestion(game)
   const correctAnswer = preprocessAnswer(question.correctAnswer)
+  console.log('preprocessed correct answer:', correctAnswer)
 
   game.answers.forEach((value: string, key: Player) => {
+    console.log('evaluate reward for', key)
     const reward = calculateReward(correctAnswer, preprocessAnswer(value))
+    console.log('Reward = ', reward)
     rewardsMap.set(key, reward)
   })
 

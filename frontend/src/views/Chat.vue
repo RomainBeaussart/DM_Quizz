@@ -18,7 +18,7 @@
             </v-list-item>
           </v-card>
         </v-col>
-        <v-col cols="10">
+        <v-col cols="8">
           <v-card
           class="mx-auto card"
           outlined
@@ -34,6 +34,36 @@
             
           </v-card>
         </v-col>
+        <v-col cols="2">
+          <v-card
+          class="mx-auto card"
+          outlined
+          >
+            <div class="section timer">
+              <h3>Timer</h3>
+              <p class="timer-value">{{timerValue}}</p>
+            </div>
+            <v-divider></v-divider>
+            <div class="section state">
+              <h3>State</h3>
+              <p>{{state}}</p>
+            </div>
+            <v-divider></v-divider>
+          </v-card>
+        </v-col>
+        <v-snackbar
+          v-model="snackbar"
+        >
+          New question !
+          <v-btn
+            color="primary"
+            text
+            @click="snackbar = false"
+          >
+            Close
+          </v-btn>
+        </v-snackbar>
+
       </v-row>
       <v-row class="row2" v-if="!error">
           <v-form class="form" @submit.prevent="emitChatMessage">
@@ -77,7 +107,6 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import createSocket from '../socket/chatSocket'
 const axios = require('axios')
-
 const systemName = 'DM-Quiz System'
 
 enum MessageType {
@@ -109,15 +138,29 @@ function isOfflineMsg (playerName: String): Message {
   }
 }
 
+function getStringAnswers (answers: Array<String>): String {
+  let str: String = ''
+  answers.forEach((answer: String, index: number) => {
+    str += `| ${answer} |`
+  })
+  str += ''
+  return str
+}
+
 
 @Component
 export default class Chat extends Vue {
-   @Prop(Number) readonly chatID: number | undefined
+  @Prop(Number) readonly chatID: number | undefined
+  state = "Wait for players"
   chatSocket = null
+  snackbar: Boolean = false
+
+  timerValue = 0
+  timerInterval = null
 
   isAnswer: boolean = false
 
-  players: Array<object> = []
+  players: Array<any> = []
   messages: Array<Message> = []
 
   points: Number = 0
@@ -144,7 +187,7 @@ export default class Chat extends Vue {
 
         // a player is offline
         this.chatSocket.on('is_offline', (user) => {
-          this.players = this.players.filter((player: any) => player.user.name = user.name)
+          this.players = this.players.filter((player: any) => player.user.name === user.name)
           this.messages.push(isOfflineMsg(user.name))
         })
 
@@ -160,6 +203,8 @@ export default class Chat extends Vue {
 
         // the game are going to start
         this.chatSocket.on('start', () => {
+          this.state = 'game started'
+
           this.messages.push({
             sender: systemName,
             text: 'the game are going to start !',
@@ -169,21 +214,21 @@ export default class Chat extends Vue {
 
         // receive a question
         this.chatSocket.on('new_question', (question) => {
+
+          console.log(question)
           this.messages.push({
             sender: systemName,
-            text: 'new question ! 20 seconds to answer it !',
-            type: MessageType.SYSTEM
-          })
-          this.messages.push({
-            sender: systemName,
-            text: `${question.question} (${question.category})`,
+            text: `${question.question} (${question.category}). POSSIBLE ANSWERS: ${getStringAnswers(question.answers)}`,
             type: MessageType.QUESTION
           })
+          this.startTimer(20)
+          this.state = 'wait for answer'
+
+          this.snackbar = true
         })
 
         // answer rejected
         this.chatSocket.on('answer_rejected', (user) => {
-          console.log(user)
           this.messages.push({
             sender: systemName,
             text: `The ${user.name}'s answer has been rejected.`,
@@ -193,7 +238,6 @@ export default class Chat extends Vue {
 
         // answer accepted
         this.chatSocket.on('answer_accepted', (user) => {
-          console.log(user)
           this.messages.push({
             sender: systemName,
             text: `The ${user.name}'s answer has been accepted.`,
@@ -202,23 +246,30 @@ export default class Chat extends Vue {
         })
 
         // receive the results for the last question
-        this.chatSocket.on('results', (rewards: any) => {
+        this.chatSocket.on('results', (rewards: Array<any>) => {
+          this.state = 'results'
           this.messages.push({
             sender: systemName,
             text: 'Results are...',
             type: MessageType.SYSTEM
           })
-          console.log(rewards)
-          if (rewards) {
-            this.messages.push({
-              sender: systemName,
-              text: `${rewards}`,
-              type: MessageType.SYSTEM
+          if (rewards.length > 0) {
+            rewards.forEach(player => {
+              const localInstanceOfPlayer = this.players.find((p) => p.user.name === player.user.name)
+              if (localInstanceOfPlayer) {
+                localInstanceOfPlayer.points = player.points
+              }
+              this.messages.push({
+                sender: systemName,
+                text: `The player ${player.user.name} answer correctly !`,
+                type: MessageType.SYSTEM
+              })
             })
+            
           } else {
             this.messages.push({
               sender: systemName,
-              text: 'nobody answer to the question',
+              text: 'nobody answer correctly to the question',
               type: MessageType.SYSTEM
             })
           }
@@ -227,6 +278,7 @@ export default class Chat extends Vue {
 
         // end of game event
         this.chatSocket.on('end_of_game', (winner) => {
+          this.state = 'end of game'
           this.messages.push({
             sender: systemName,
             text: `END OF GAME !! The winner is ${winner.user.name} with ${winner.points} points.`, 
@@ -242,6 +294,23 @@ export default class Chat extends Vue {
     } catch (err) {
       this.error = err
     }
+  }
+
+  startTimer (seconds: number) {
+    this.timerValue = seconds
+    this.timerInterval = setInterval(() => this.countDown(), 1000)
+  }
+
+  countDown () {
+    if (this.timerValue === 0) {
+      this.stopTimer()
+    } else {
+      this.timerValue--
+    }
+  }
+
+  stopTimer () {
+    clearInterval(this.timerInterval)
   }
 
   emitChatMessage() {
@@ -273,6 +342,7 @@ export default class Chat extends Vue {
 
 .row2 {
   flex-grow: 1;
+  margin: 0;
 }
 
 .btn {
@@ -280,12 +350,12 @@ export default class Chat extends Vue {
 }
 
 .card {
-  max-height: 420px;
-  height: 420px;
+  height: 100%;
+  height: 70vh;
 }
 
 .messages {
-  height: 400px;
+  height: 65vh;
   overflow-y: scroll;
   list-style: none;
   margin: 15px;
@@ -314,6 +384,17 @@ export default class Chat extends Vue {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.section {
+  padding: 4%;
+}
+
+.timer-value {
+  font-size: 5em;
+  color: #66BB6A;
+  width: 100%;
+  text-align: center;
 }
 
 </style>

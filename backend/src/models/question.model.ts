@@ -1,7 +1,6 @@
 // Base on opentdb.com API
 // exemple of question
 /*
-{
   "category":"Entertainment: Video Games",
   "type":"multiple",
   "difficulty":"easy",
