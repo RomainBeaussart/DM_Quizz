@@ -12,6 +12,7 @@ import { mergeTypes } from 'merge-graphql-schemas'
 import { readFileSync } from 'fs'
 import { Prisma } from '../prisma/generated/prisma-client'
 import { appRouter } from './routes/routes'
+import user from './resolvers/user'
 
 const SOCKET_PORT = 8080
 const SERVER_IP = '127.0.0.1'
@@ -19,16 +20,19 @@ const SERVER_IP = '127.0.0.1'
 const forwardedRequests = [
     // ! Queries
     "Query.games", "Query.game", 
-    "Query.players", "Query.player"
+    "Query.players", "Query.player", "Query.playersConnection",
+
 
     // ! Mutations
-
+    "Mutation.createPlayer"
 ]
 
 const resolvers = {
   Query: {
+    ...user.Query
   },
   Mutation: {
+    ...user.Mutation
   },
 
   Subscription: {
@@ -47,8 +51,7 @@ let binding = new PrismaBinding({
 })
 
 const server = new GraphQLServer({
-  // typeDefs: mergeTypes([readFileSync('./prisma/generated/prisma.graphql').toString(), readFileSync('./schema.graphql').toString()], { all: true }),
-  typeDefs: readFileSync('./prisma/generated/prisma.graphql').toString(),
+  typeDefs: mergeTypes([readFileSync('./prisma/generated/prisma.graphql').toString(), readFileSync('./schema.graphql').toString()], { all: true }),
   resolvers,
   middlewares: [bindingForwardMiddleware],
   context: (c) => {

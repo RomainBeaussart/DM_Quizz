@@ -8,6 +8,9 @@ var store: any = {
       user: { id: 1, name: 'testUser'}
     },
     mutations: {
+      setUserId(state, id) {
+        state.user.id = id
+      }
     },
     actions: {
     },

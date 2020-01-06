@@ -51,6 +51,8 @@ export default class Chats extends Vue {
         { text: "Info", value: ""},
     ]
 
+    loading = false
+
     get id() {
         return this.$store.state.user.id
     }
@@ -62,14 +64,14 @@ export default class Chats extends Vue {
                 id: this.id
             }
         },
-        skip(){
-            return this.id
+        skip() {
+            return !this.id
         },
         result({ data, loading, networkStatus }) {
+            this.loading = loading
             if (!loading) {
-                if (data && data.chats) {
-                    console.log(data.chats)
-                    this.chats = data.chats
+                if (data && data.player && data.player.games) {
+                    
                 }
             }
         }

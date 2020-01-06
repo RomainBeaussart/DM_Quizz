@@ -1,0 +1,8 @@
+mutation CreatePlayer ($name: String!, $password: String!){
+    createPlayer(data:{ 
+        name: $name,
+        password: $password
+    }) {
+        id
+    }
+}

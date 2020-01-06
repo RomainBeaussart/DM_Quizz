@@ -1,5 +1,5 @@
 query Games ($id:ID!){
-    players(where: {
+    player(where: {
         id: $id
     }){
         games {
