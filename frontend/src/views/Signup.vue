@@ -4,7 +4,10 @@
             width="60%"
             rounded
         >
-            <v-layout wrap pa-5>
+            <v-layout wrap pa-5 class="d-flex justify-center">
+            <v-flex xs8 class="d-flex justify-center title" pb-2>
+                Sign up
+            </v-flex>
                 <v-flex xs8>
                     <v-text-field
                         v-model="username"
@@ -36,7 +39,10 @@
                         outlined
                     ></v-text-field>
                 </v-flex>
-                <v-flex xs8>
+                <v-flex xs6 class="d-flex align-top">
+                    <router-link to="/">Login</router-link>
+                </v-flex>
+                <v-flex xs6 class="d-flex justify-end">
                     <v-btn
                         @click="signup()"
                     >Sign Up</v-btn>

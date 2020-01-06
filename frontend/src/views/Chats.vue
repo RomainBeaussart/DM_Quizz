@@ -1,19 +1,29 @@
 <template>
     <v-container fluid>
         <v-layout wrap>
-            <v-flex xs12 class="d-flex justify-center display-2" my-5>
+            <v-flex xs2 style="max-height: 60px !important;"></v-flex>
+            <v-flex xs8 class="d-flex align-center title" style="max-height: 60px !important;">
                 Chats
+            </v-flex>
+            <v-flex xs2 class="d-flex align-center" style="max-height: 60px !important;">
+                <v-btn
+                    fab
+                    dark
+                >
+                    <v-icon>add</v-icon>
+                </v-btn>
             </v-flex>
             <v-flex xs12 class="d-flex justify-center">
                 <v-card
                     width="80%"
+                    rounded
                 >
                     <v-data-table
+                        rounded
                         :headers="headers"
                         :items="chats"
                         class="table"
                         fixed-header
-                        max-height="60vh"
                         :loading="loading"
                     >
                         <!-- BODY -->

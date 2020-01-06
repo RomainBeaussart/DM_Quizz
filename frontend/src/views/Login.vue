@@ -4,14 +4,16 @@
             width="60%"
             rounded
         >
-        <v-layout wrap pa-5>
-            <v-flex xs12>
+        <v-layout wrap pa-5 class="d-flex justify-center">
+            <v-flex xs8 class="d-flex justify-center title" pb-2>
+                Login
+            </v-flex>
+            <v-flex xs8>
                 <v-text-field
                     v-model="user"
                     label="Login"
-                    solo
                     class="d-flex align-center"
-                    elevation="0"
+                    outlined
                 >
                 </v-text-field>
             </v-flex>
@@ -19,10 +21,16 @@
                 <v-text-field
                     v-model="password"
                     label="Password"
-                    solo
+                    :append-icon="passwordShow ? 'visibility' : 'visibility_off'"
+                    :type="passwordShow ? 'text' : 'password'"
+                    @click:append="passwordShow = !passwordShow"
+                    outlined
                 ></v-text-field>
             </v-flex>
-            <v-flex xs12>
+            <v-flex xs6 class="d-flex align-top">
+                <router-link to="signup">Sign up</router-link>
+            </v-flex>
+            <v-flex xs6 class="d-flex justify-end">
                 <v-btn
                     color="primary"
                     @click="login()"
@@ -44,6 +52,7 @@ import LOGIN from '../graphql/Login.gql'
 export default class Login extends Vue {
     user = ""
     password = ""
+    passwordShow = false
 
     async login() {
         console.log(this.user, this.password)
@@ -60,7 +69,6 @@ export default class Login extends Vue {
         }
         console.log(this.$store.state.user.id)
         this.$router.push({name: 'chats' })
-
     }
 
 }
