@@ -24,29 +24,80 @@ export const createGame = (id: number, io, users: User[], questions: Question[],
 })
 
 /**
+ * Handle the next question of a game object given as parameter.
+ * @param game the game
+ */
+function handleNextQuestion (game: Game) {
+  if (game.questions.length > 0) {
+    const question = getQuestion(game)
+    game.waitForAnswers = true
+    game.socketNamespace.emit('new_question', question)
+    setTimeout(() => {
+      game.waitForAnswers = false
+      const rewards: Map<Player, number> = getRewards(game)
+      const results: Array<Player> = applyRewards(rewards, game)
+      game.socketNamespace.emit('results', results)
+      setTimeout(() => handleNextQuestion(game), 5000)
+    }, 26000)
+  } else {
+    // end of game
+    game.socketNamespace.emit('end_of_game', getWinner(game))
+  }
+}
+
+/**
  * listen on game's socket namespace
  * @param game game
  */
 export const listen = (game: Game) => {
   game.socketNamespace.on('connection', (socket) => {
+
+    // new player join the game
     socket.on('new_player', (user: User) => {
-      game.socketNamespace.emit('is_online', createPlayer(user))
+      const newPlayer = createPlayer(user)
+
+      // add the player to the game object
+      if (!game.start && !game.players.map(_ => _.user.name).includes(newPlayer.user.name)) {
+        game.players.push(newPlayer)
+      }
+
+      // notify the other players by emitting 'is_online'
+      game.socketNamespace.emit('is_online', newPlayer)
+
+      // start the game if the maxPlayers number = length of players array
+      if (game.players.length === game.maxPlayers) {
+        game.socketNamespace.emit('start')
+        setTimeout(() => {
+          game.start = true
+          handleNextQuestion(game)
+        }, 2000)
+      }
+
     })
 
-    socket.on('disconnect', (player: Player) => {
-      game.socketNamespace.emit('player_is_offline', player)
+    // a player quits the game
+    socket.on('disconnect', (user: User) => {
+      game.players = game.players.filter((player: Player) => player.user.name !== user.name)
+      game.socketNamespace.emit('is_offline', user)
     })
 
-    socket.on('chat_message', (message: string, player: Player) => {
-      game.socketNamespace.emit('chat_message', `${player.user.name}: ${message}`)
+    /** Basic chat message */
+    socket.on('chat_message', (message: string, user: User) => {
+      game.socketNamespace.emit('chat_message', message, user)
     })
 
-    socket.on('answer', (answer: string, player: Player) => {
-      if (game.waitForAnswers) {
+    /** answer to a question */
+    socket.on('answer', (answer: string, user: User) => {
+      if (game.waitForAnswers && answer) {
+        const player: Player = game.players.find((player: Player) => player.user.id === user.id)
+
         game.answers.set(player, answer)
         if (game.answers.values.length === game.players.length) {
-          const rewards: Map<Player, Reward> = getRewards(game)
+          game.waitForAnswers = false
         }
+        game.socketNamespace.emit('answer_accepted', user)
+      } else {
+        game.socketNamespace.emit('answer_rejected', user)
       }
     })
   })
@@ -92,16 +143,36 @@ const calculateReward = (correctAnswer: string, playerAnswer: string): Reward =>
 }
 
 /**
+ * Apply the rewards to the game object given as parameter.
+ * @param rewards rewards map.
+ * @param game the game object to apply rewards.
+ */
+function applyRewards (rewards: Map<Player, number>, game: Game): Array<Player> {
+  const rewardedPlayers: Array<Player> = []
+  rewards.forEach((value: number, key: Player) => {
+    if (value > 0) {
+      const thePlayer = game.players.find((player: Player) => player.user.id === key.user.id)
+      thePlayer.points += value
+      rewardedPlayers.push(thePlayer)
+    }
+  })
+  return rewardedPlayers
+}
+
+/**
  * returns the rewards given to players in function of their answers.
  * @param game
  */
-export const getRewards = (game: Game): Map<Player, Reward> => {
+const getRewards = (game: Game): Map<Player, Reward> => {
   const rewardsMap = new Map<Player, Reward>()
   const question = getCurrentQuestion(game)
   const correctAnswer = preprocessAnswer(question.correctAnswer)
+  console.log('preprocessed correct answer:', correctAnswer)
 
   game.answers.forEach((value: string, key: Player) => {
+    console.log('evaluate reward for', key)
     const reward = calculateReward(correctAnswer, preprocessAnswer(value))
+    console.log('Reward = ', reward)
     rewardsMap.set(key, reward)
   })
 

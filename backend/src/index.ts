@@ -14,7 +14,9 @@ import { Prisma } from '../prisma/generated/prisma-client'
 import { appRouter } from './routes/routes'
 import user from './resolvers/user'
 
-const SOCKET_PORT = 8080
+const cors = require('cors')
+
+const SOCKET_PORT = 7545
 const SERVER_IP = '127.0.0.1'
 
 const forwardedRequests = [
@@ -66,14 +68,13 @@ const server = new GraphQLServer({
 
 // Express server config
 
+server.express.use(cors())
+
 server.express.use(bodyParser.json({ limit: '50mb' }))
 server.express.use(bodyParser.urlencoded({
   limit: '10mb',
   extended: true
 }))
-
-server.express.set('views', './src/views')
-server.express.set('view engine', 'ejs')
 
 server.express.use(function (req, res, next) {
   req.prisma = prisma

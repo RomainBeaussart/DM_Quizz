@@ -22,12 +22,15 @@ export const appRouter = () => {
    * }
    */
   router.post('/dmquizz', (req: Request, res: Response) => {
+    console.log('create a new game instance')
+    console.log(req.body)
     const user: User = req.body.user
     const gameConfig = req.body.config
 
     if (!user || !gameConfig || !gameConfig.maxPlayers) {
       res.sendStatus(500)
     }
+    console.log('get the questions')
     getQuestions()
       .then((questions: Array<Question>) => {
         const newGame: Game = createGame(games.length + 1, req.app.get('socketio'), [user], questions, gameConfig.maxPlayers)
@@ -44,6 +47,6 @@ export const appRouter = () => {
       res.render('index')
     })
   })
-  
+
   return router
 }
