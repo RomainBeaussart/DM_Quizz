@@ -1,0 +1,10 @@
+query Login($username: String!, $password: String!) {
+    login( data:{
+            username: $username,
+            password: $password
+        })
+    {
+        id
+        name
+    }
+}

@@ -1,0 +1,27 @@
+mutation{ 
+    player_1: createPlayer(data: {
+        name: "Romain",
+        password: "$2a$10$6/1U8UzWxt.OAtSWOH9JuOGShjVVcZ2afTrD06Nc61R7WlZ9J4oLu"
+    }) { id }
+
+    player_2: createPlayer(data: {
+        name: "Louis",
+        password: "$2a$10$6/1U8UzWxt.OAtSWOH9JuOGShjVVcZ2afTrD06Nc61R7WlZ9J4oLu"
+    }) { id }
+
+    game_1: createGame(
+    data: {
+      players: { connect: [{ name: "Romain" }, { name: "Louis" }] }
+      maxPlayers: 5
+      questions: {
+        create: [
+          {
+            category: "City"
+            question: "France capital ?"
+            correctAnswer: "Paris"
+            answers: {set: ["Paris", "Montréal", "Villejuif", "Kuala Lumpur"]}
+          }
+        ]
+      }
+    }) { id }
+}

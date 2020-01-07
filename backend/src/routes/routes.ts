@@ -1,41 +1,52 @@
 import { Router, Request, Response } from 'express'
+import { Game } from '../models/game.model'
+import { User } from '../models/user.model'
+import { createGame, listen } from '../services/game.service'
+import { Question } from '../models/question.model'
+import getQuestions from '../_api'
+import { SERVER_IP, SOCKET_PORT } from '..'
 
 export const appRouter = () => {
   const router = Router()
-  let socketIsSet = false
+  const games: Array<Game> = []
 
-  function setSocket (io) {
-    io.sockets.on('connection', function (socket) {
+  /**
+   * create a chat / a game instance
+   * body du post =
+   * {
+   *    user: {
+   *    },
+   *    config: {
+   *      maxPlayers
+   *    }
+   * }
+   */
+  router.post('/dmquizz', (req: Request, res: Response) => {
+    console.log('create a new game instance')
+    console.log(req.body)
+    const user: User = req.body.user
+    const gameConfig = req.body.config
 
-      socket.on('username', function (username) {
-        console.log(`${username} is connecting to the chat`)
-        socket.username = username
-        io.emit('is_online', '🔵 <i>' + socket.username + ' join the chat..</i>')
-      })
-
-      socket.on('disconnect', function (username) {
-        io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>')
-      })
-
-      socket.on('chat_message', function (message) {
-        io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message)
-      })
-
-      socketIsSet = true
-    })
-  }
-
-  router.get('/', (req: Request, res: Response) => {
-    res.send('Router works !')
-  })
-
-  router.get('/chat', (req: Request, res: Response) => {
-    if (!socketIsSet) {
-      const io = req.app.get('socketio')
-      setSocket(io)
+    if (!user || !gameConfig || !gameConfig.maxPlayers) {
+      res.sendStatus(500)
     }
-    // render chat front end
-    res.render('index')
+    getQuestions()
+      .then((questions: Array<Question>) => {
+        const gameId = games.length + 1
+        const newGame: Game = createGame(gameId, req.app.get('socketio'), [user], questions, gameConfig.maxPlayers)
+        games.push(newGame)
+        listen(newGame)
+        res.send({ url: `http://${SERVER_IP}:8080/chat/${gameId}` })
+      })
+      .catch(err => {
+        console.error(err)
+        res.sendStatus(500)
+      })
+
+    router.get('/index', (req: Request, res: Response) => {
+      res.render('index')
+    })
   })
+
   return router
 }

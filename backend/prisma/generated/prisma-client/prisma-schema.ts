@@ -2,27 +2,15 @@
   // Please don't change this file manually but run `prisma generate` to update it.
   // For more information, please read the docs: https://www.prisma.io/docs/prisma-client/
 
-export const typeDefs = /* GraphQL */ `type AggregateDisplay {
+export const typeDefs = /* GraphQL */ `type AggregateGame {
   count: Int!
 }
 
-type AggregateProgress {
+type AggregatePlayer {
   count: Int!
 }
 
-type AggregateSeason {
-  count: Int!
-}
-
-type AggregateSerie {
-  count: Int!
-}
-
-type AggregateUser {
-  count: Int!
-}
-
-type AggregateVideo {
+type AggregateQuestion {
   count: Int!
 }
 
@@ -30,82 +18,55 @@ type BatchPayload {
   count: Long!
 }
 
-scalar DateTime
-
-type Display {
+type Game {
   id: ID!
-  name: String
-  type: MediaType
-  trailer: String
-  big: String
-  medium: String
-  small: String
-  likeable: Likeable
+  players(where: PlayerWhereInput, orderBy: PlayerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Player!]
+  maxPlayers: Int
+  questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
 }
 
-type DisplayConnection {
+type GameConnection {
   pageInfo: PageInfo!
-  edges: [DisplayEdge]!
-  aggregate: AggregateDisplay!
+  edges: [GameEdge]!
+  aggregate: AggregateGame!
 }
 
-input DisplayCreateInput {
+input GameCreateInput {
   id: ID
-  name: String
-  type: MediaType
-  trailer: String
-  big: String
-  medium: String
-  small: String
-  likeable: Likeable
+  players: PlayerCreateManyWithoutGamesInput
+  maxPlayers: Int
+  questions: QuestionCreateManyInput
 }
 
-input DisplayCreateManyInput {
-  create: [DisplayCreateInput!]
-  connect: [DisplayWhereUniqueInput!]
+input GameCreateManyWithoutPlayersInput {
+  create: [GameCreateWithoutPlayersInput!]
+  connect: [GameWhereUniqueInput!]
 }
 
-input DisplayCreateOneInput {
-  create: DisplayCreateInput
-  connect: DisplayWhereUniqueInput
+input GameCreateWithoutPlayersInput {
+  id: ID
+  maxPlayers: Int
+  questions: QuestionCreateManyInput
 }
 
-type DisplayEdge {
-  node: Display!
+type GameEdge {
+  node: Game!
   cursor: String!
 }
 
-enum DisplayOrderByInput {
+enum GameOrderByInput {
   id_ASC
   id_DESC
-  name_ASC
-  name_DESC
-  type_ASC
-  type_DESC
-  trailer_ASC
-  trailer_DESC
-  big_ASC
-  big_DESC
-  medium_ASC
-  medium_DESC
-  small_ASC
-  small_DESC
-  likeable_ASC
-  likeable_DESC
+  maxPlayers_ASC
+  maxPlayers_DESC
 }
 
-type DisplayPreviousValues {
+type GamePreviousValues {
   id: ID!
-  name: String
-  type: MediaType
-  trailer: String
-  big: String
-  medium: String
-  small: String
-  likeable: Likeable
+  maxPlayers: Int
 }
 
-input DisplayScalarWhereInput {
+input GameScalarWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -120,197 +81,85 @@ input DisplayScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  type: MediaType
-  type_not: MediaType
-  type_in: [MediaType!]
-  type_not_in: [MediaType!]
-  trailer: String
-  trailer_not: String
-  trailer_in: [String!]
-  trailer_not_in: [String!]
-  trailer_lt: String
-  trailer_lte: String
-  trailer_gt: String
-  trailer_gte: String
-  trailer_contains: String
-  trailer_not_contains: String
-  trailer_starts_with: String
-  trailer_not_starts_with: String
-  trailer_ends_with: String
-  trailer_not_ends_with: String
-  big: String
-  big_not: String
-  big_in: [String!]
-  big_not_in: [String!]
-  big_lt: String
-  big_lte: String
-  big_gt: String
-  big_gte: String
-  big_contains: String
-  big_not_contains: String
-  big_starts_with: String
-  big_not_starts_with: String
-  big_ends_with: String
-  big_not_ends_with: String
-  medium: String
-  medium_not: String
-  medium_in: [String!]
-  medium_not_in: [String!]
-  medium_lt: String
-  medium_lte: String
-  medium_gt: String
-  medium_gte: String
-  medium_contains: String
-  medium_not_contains: String
-  medium_starts_with: String
-  medium_not_starts_with: String
-  medium_ends_with: String
-  medium_not_ends_with: String
-  small: String
-  small_not: String
-  small_in: [String!]
-  small_not_in: [String!]
-  small_lt: String
-  small_lte: String
-  small_gt: String
-  small_gte: String
-  small_contains: String
-  small_not_contains: String
-  small_starts_with: String
-  small_not_starts_with: String
-  small_ends_with: String
-  small_not_ends_with: String
-  likeable: Likeable
-  likeable_not: Likeable
-  likeable_in: [Likeable!]
-  likeable_not_in: [Likeable!]
-  AND: [DisplayScalarWhereInput!]
-  OR: [DisplayScalarWhereInput!]
-  NOT: [DisplayScalarWhereInput!]
+  maxPlayers: Int
+  maxPlayers_not: Int
+  maxPlayers_in: [Int!]
+  maxPlayers_not_in: [Int!]
+  maxPlayers_lt: Int
+  maxPlayers_lte: Int
+  maxPlayers_gt: Int
+  maxPlayers_gte: Int
+  AND: [GameScalarWhereInput!]
+  OR: [GameScalarWhereInput!]
+  NOT: [GameScalarWhereInput!]
 }
 
-type DisplaySubscriptionPayload {
+type GameSubscriptionPayload {
   mutation: MutationType!
-  node: Display
+  node: Game
   updatedFields: [String!]
-  previousValues: DisplayPreviousValues
+  previousValues: GamePreviousValues
 }
 
-input DisplaySubscriptionWhereInput {
+input GameSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: DisplayWhereInput
-  AND: [DisplaySubscriptionWhereInput!]
-  OR: [DisplaySubscriptionWhereInput!]
-  NOT: [DisplaySubscriptionWhereInput!]
+  node: GameWhereInput
+  AND: [GameSubscriptionWhereInput!]
+  OR: [GameSubscriptionWhereInput!]
+  NOT: [GameSubscriptionWhereInput!]
 }
 
-input DisplayUpdateDataInput {
-  name: String
-  type: MediaType
-  trailer: String
-  big: String
-  medium: String
-  small: String
-  likeable: Likeable
+input GameUpdateInput {
+  players: PlayerUpdateManyWithoutGamesInput
+  maxPlayers: Int
+  questions: QuestionUpdateManyInput
 }
 
-input DisplayUpdateInput {
-  name: String
-  type: MediaType
-  trailer: String
-  big: String
-  medium: String
-  small: String
-  likeable: Likeable
+input GameUpdateManyDataInput {
+  maxPlayers: Int
 }
 
-input DisplayUpdateManyDataInput {
-  name: String
-  type: MediaType
-  trailer: String
-  big: String
-  medium: String
-  small: String
-  likeable: Likeable
+input GameUpdateManyMutationInput {
+  maxPlayers: Int
 }
 
-input DisplayUpdateManyInput {
-  create: [DisplayCreateInput!]
-  update: [DisplayUpdateWithWhereUniqueNestedInput!]
-  upsert: [DisplayUpsertWithWhereUniqueNestedInput!]
-  delete: [DisplayWhereUniqueInput!]
-  connect: [DisplayWhereUniqueInput!]
-  set: [DisplayWhereUniqueInput!]
-  disconnect: [DisplayWhereUniqueInput!]
-  deleteMany: [DisplayScalarWhereInput!]
-  updateMany: [DisplayUpdateManyWithWhereNestedInput!]
+input GameUpdateManyWithoutPlayersInput {
+  create: [GameCreateWithoutPlayersInput!]
+  delete: [GameWhereUniqueInput!]
+  connect: [GameWhereUniqueInput!]
+  set: [GameWhereUniqueInput!]
+  disconnect: [GameWhereUniqueInput!]
+  update: [GameUpdateWithWhereUniqueWithoutPlayersInput!]
+  upsert: [GameUpsertWithWhereUniqueWithoutPlayersInput!]
+  deleteMany: [GameScalarWhereInput!]
+  updateMany: [GameUpdateManyWithWhereNestedInput!]
 }
 
-input DisplayUpdateManyMutationInput {
-  name: String
-  type: MediaType
-  trailer: String
-  big: String
-  medium: String
-  small: String
-  likeable: Likeable
+input GameUpdateManyWithWhereNestedInput {
+  where: GameScalarWhereInput!
+  data: GameUpdateManyDataInput!
 }
 
-input DisplayUpdateManyWithWhereNestedInput {
-  where: DisplayScalarWhereInput!
-  data: DisplayUpdateManyDataInput!
+input GameUpdateWithoutPlayersDataInput {
+  maxPlayers: Int
+  questions: QuestionUpdateManyInput
 }
 
-input DisplayUpdateOneInput {
-  create: DisplayCreateInput
-  update: DisplayUpdateDataInput
-  upsert: DisplayUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: DisplayWhereUniqueInput
+input GameUpdateWithWhereUniqueWithoutPlayersInput {
+  where: GameWhereUniqueInput!
+  data: GameUpdateWithoutPlayersDataInput!
 }
 
-input DisplayUpdateOneRequiredInput {
-  create: DisplayCreateInput
-  update: DisplayUpdateDataInput
-  upsert: DisplayUpsertNestedInput
-  connect: DisplayWhereUniqueInput
+input GameUpsertWithWhereUniqueWithoutPlayersInput {
+  where: GameWhereUniqueInput!
+  update: GameUpdateWithoutPlayersDataInput!
+  create: GameCreateWithoutPlayersInput!
 }
 
-input DisplayUpdateWithWhereUniqueNestedInput {
-  where: DisplayWhereUniqueInput!
-  data: DisplayUpdateDataInput!
-}
-
-input DisplayUpsertNestedInput {
-  update: DisplayUpdateDataInput!
-  create: DisplayCreateInput!
-}
-
-input DisplayUpsertWithWhereUniqueNestedInput {
-  where: DisplayWhereUniqueInput!
-  update: DisplayUpdateDataInput!
-  create: DisplayCreateInput!
-}
-
-input DisplayWhereInput {
+input GameWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -325,144 +174,50 @@ input DisplayWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  type: MediaType
-  type_not: MediaType
-  type_in: [MediaType!]
-  type_not_in: [MediaType!]
-  trailer: String
-  trailer_not: String
-  trailer_in: [String!]
-  trailer_not_in: [String!]
-  trailer_lt: String
-  trailer_lte: String
-  trailer_gt: String
-  trailer_gte: String
-  trailer_contains: String
-  trailer_not_contains: String
-  trailer_starts_with: String
-  trailer_not_starts_with: String
-  trailer_ends_with: String
-  trailer_not_ends_with: String
-  big: String
-  big_not: String
-  big_in: [String!]
-  big_not_in: [String!]
-  big_lt: String
-  big_lte: String
-  big_gt: String
-  big_gte: String
-  big_contains: String
-  big_not_contains: String
-  big_starts_with: String
-  big_not_starts_with: String
-  big_ends_with: String
-  big_not_ends_with: String
-  medium: String
-  medium_not: String
-  medium_in: [String!]
-  medium_not_in: [String!]
-  medium_lt: String
-  medium_lte: String
-  medium_gt: String
-  medium_gte: String
-  medium_contains: String
-  medium_not_contains: String
-  medium_starts_with: String
-  medium_not_starts_with: String
-  medium_ends_with: String
-  medium_not_ends_with: String
-  small: String
-  small_not: String
-  small_in: [String!]
-  small_not_in: [String!]
-  small_lt: String
-  small_lte: String
-  small_gt: String
-  small_gte: String
-  small_contains: String
-  small_not_contains: String
-  small_starts_with: String
-  small_not_starts_with: String
-  small_ends_with: String
-  small_not_ends_with: String
-  likeable: Likeable
-  likeable_not: Likeable
-  likeable_in: [Likeable!]
-  likeable_not_in: [Likeable!]
-  AND: [DisplayWhereInput!]
-  OR: [DisplayWhereInput!]
-  NOT: [DisplayWhereInput!]
+  players_every: PlayerWhereInput
+  players_some: PlayerWhereInput
+  players_none: PlayerWhereInput
+  maxPlayers: Int
+  maxPlayers_not: Int
+  maxPlayers_in: [Int!]
+  maxPlayers_not_in: [Int!]
+  maxPlayers_lt: Int
+  maxPlayers_lte: Int
+  maxPlayers_gt: Int
+  maxPlayers_gte: Int
+  questions_every: QuestionWhereInput
+  questions_some: QuestionWhereInput
+  questions_none: QuestionWhereInput
+  AND: [GameWhereInput!]
+  OR: [GameWhereInput!]
+  NOT: [GameWhereInput!]
 }
 
-input DisplayWhereUniqueInput {
+input GameWhereUniqueInput {
   id: ID
-}
-
-enum Likeable {
-  LIKEABLE
-  NOT_LIKEABLE
 }
 
 scalar Long
 
-enum MediaType {
-  SERIE
-  MOVIE
-  MANGA
-  ANIME
-}
-
 type Mutation {
-  createDisplay(data: DisplayCreateInput!): Display!
-  updateDisplay(data: DisplayUpdateInput!, where: DisplayWhereUniqueInput!): Display
-  updateManyDisplays(data: DisplayUpdateManyMutationInput!, where: DisplayWhereInput): BatchPayload!
-  upsertDisplay(where: DisplayWhereUniqueInput!, create: DisplayCreateInput!, update: DisplayUpdateInput!): Display!
-  deleteDisplay(where: DisplayWhereUniqueInput!): Display
-  deleteManyDisplays(where: DisplayWhereInput): BatchPayload!
-  createProgress(data: ProgressCreateInput!): Progress!
-  updateProgress(data: ProgressUpdateInput!, where: ProgressWhereUniqueInput!): Progress
-  updateManyProgresses(data: ProgressUpdateManyMutationInput!, where: ProgressWhereInput): BatchPayload!
-  upsertProgress(where: ProgressWhereUniqueInput!, create: ProgressCreateInput!, update: ProgressUpdateInput!): Progress!
-  deleteProgress(where: ProgressWhereUniqueInput!): Progress
-  deleteManyProgresses(where: ProgressWhereInput): BatchPayload!
-  createSeason(data: SeasonCreateInput!): Season!
-  updateSeason(data: SeasonUpdateInput!, where: SeasonWhereUniqueInput!): Season
-  updateManySeasons(data: SeasonUpdateManyMutationInput!, where: SeasonWhereInput): BatchPayload!
-  upsertSeason(where: SeasonWhereUniqueInput!, create: SeasonCreateInput!, update: SeasonUpdateInput!): Season!
-  deleteSeason(where: SeasonWhereUniqueInput!): Season
-  deleteManySeasons(where: SeasonWhereInput): BatchPayload!
-  createSerie(data: SerieCreateInput!): Serie!
-  updateSerie(data: SerieUpdateInput!, where: SerieWhereUniqueInput!): Serie
-  updateManySeries(data: SerieUpdateManyMutationInput!, where: SerieWhereInput): BatchPayload!
-  upsertSerie(where: SerieWhereUniqueInput!, create: SerieCreateInput!, update: SerieUpdateInput!): Serie!
-  deleteSerie(where: SerieWhereUniqueInput!): Serie
-  deleteManySeries(where: SerieWhereInput): BatchPayload!
-  createUser(data: UserCreateInput!): User!
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
-  deleteUser(where: UserWhereUniqueInput!): User
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
-  createVideo(data: VideoCreateInput!): Video!
-  updateVideo(data: VideoUpdateInput!, where: VideoWhereUniqueInput!): Video
-  updateManyVideos(data: VideoUpdateManyMutationInput!, where: VideoWhereInput): BatchPayload!
-  upsertVideo(where: VideoWhereUniqueInput!, create: VideoCreateInput!, update: VideoUpdateInput!): Video!
-  deleteVideo(where: VideoWhereUniqueInput!): Video
-  deleteManyVideos(where: VideoWhereInput): BatchPayload!
+  createGame(data: GameCreateInput!): Game!
+  updateGame(data: GameUpdateInput!, where: GameWhereUniqueInput!): Game
+  updateManyGames(data: GameUpdateManyMutationInput!, where: GameWhereInput): BatchPayload!
+  upsertGame(where: GameWhereUniqueInput!, create: GameCreateInput!, update: GameUpdateInput!): Game!
+  deleteGame(where: GameWhereUniqueInput!): Game
+  deleteManyGames(where: GameWhereInput): BatchPayload!
+  createPlayer(data: PlayerCreateInput!): Player!
+  updatePlayer(data: PlayerUpdateInput!, where: PlayerWhereUniqueInput!): Player
+  updateManyPlayers(data: PlayerUpdateManyMutationInput!, where: PlayerWhereInput): BatchPayload!
+  upsertPlayer(where: PlayerWhereUniqueInput!, create: PlayerCreateInput!, update: PlayerUpdateInput!): Player!
+  deletePlayer(where: PlayerWhereUniqueInput!): Player
+  deleteManyPlayers(where: PlayerWhereInput): BatchPayload!
+  createQuestion(data: QuestionCreateInput!): Question!
+  updateQuestion(data: QuestionUpdateInput!, where: QuestionWhereUniqueInput!): Question
+  updateManyQuestions(data: QuestionUpdateManyMutationInput!, where: QuestionWhereInput): BatchPayload!
+  upsertQuestion(where: QuestionWhereUniqueInput!, create: QuestionCreateInput!, update: QuestionUpdateInput!): Question!
+  deleteQuestion(where: QuestionWhereUniqueInput!): Question
+  deleteManyQuestions(where: QuestionWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -482,697 +237,64 @@ type PageInfo {
   endCursor: String
 }
 
-type Progress {
+type Player {
   id: ID!
-  avancement: Float!
-  video: Video!
-  user: User!
+  name: String!
+  password: String!
+  points: Int
+  games(where: GameWhereInput, orderBy: GameOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Game!]
 }
 
-type ProgressConnection {
+type PlayerConnection {
   pageInfo: PageInfo!
-  edges: [ProgressEdge]!
-  aggregate: AggregateProgress!
+  edges: [PlayerEdge]!
+  aggregate: AggregatePlayer!
 }
 
-input ProgressCreateInput {
+input PlayerCreateInput {
   id: ID
-  avancement: Float!
-  video: VideoCreateOneInput!
-  user: UserCreateOneWithoutProgressesInput!
+  name: String!
+  password: String!
+  points: Int
+  games: GameCreateManyWithoutPlayersInput
 }
 
-input ProgressCreateManyWithoutUserInput {
-  create: [ProgressCreateWithoutUserInput!]
-  connect: [ProgressWhereUniqueInput!]
+input PlayerCreateManyWithoutGamesInput {
+  create: [PlayerCreateWithoutGamesInput!]
+  connect: [PlayerWhereUniqueInput!]
 }
 
-input ProgressCreateWithoutUserInput {
+input PlayerCreateWithoutGamesInput {
   id: ID
-  avancement: Float!
-  video: VideoCreateOneInput!
+  name: String!
+  password: String!
+  points: Int
 }
 
-type ProgressEdge {
-  node: Progress!
+type PlayerEdge {
+  node: Player!
   cursor: String!
 }
 
-enum ProgressOrderByInput {
-  id_ASC
-  id_DESC
-  avancement_ASC
-  avancement_DESC
-}
-
-type ProgressPreviousValues {
-  id: ID!
-  avancement: Float!
-}
-
-input ProgressScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  avancement: Float
-  avancement_not: Float
-  avancement_in: [Float!]
-  avancement_not_in: [Float!]
-  avancement_lt: Float
-  avancement_lte: Float
-  avancement_gt: Float
-  avancement_gte: Float
-  AND: [ProgressScalarWhereInput!]
-  OR: [ProgressScalarWhereInput!]
-  NOT: [ProgressScalarWhereInput!]
-}
-
-type ProgressSubscriptionPayload {
-  mutation: MutationType!
-  node: Progress
-  updatedFields: [String!]
-  previousValues: ProgressPreviousValues
-}
-
-input ProgressSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: ProgressWhereInput
-  AND: [ProgressSubscriptionWhereInput!]
-  OR: [ProgressSubscriptionWhereInput!]
-  NOT: [ProgressSubscriptionWhereInput!]
-}
-
-input ProgressUpdateInput {
-  avancement: Float
-  video: VideoUpdateOneRequiredInput
-  user: UserUpdateOneRequiredWithoutProgressesInput
-}
-
-input ProgressUpdateManyDataInput {
-  avancement: Float
-}
-
-input ProgressUpdateManyMutationInput {
-  avancement: Float
-}
-
-input ProgressUpdateManyWithoutUserInput {
-  create: [ProgressCreateWithoutUserInput!]
-  delete: [ProgressWhereUniqueInput!]
-  connect: [ProgressWhereUniqueInput!]
-  set: [ProgressWhereUniqueInput!]
-  disconnect: [ProgressWhereUniqueInput!]
-  update: [ProgressUpdateWithWhereUniqueWithoutUserInput!]
-  upsert: [ProgressUpsertWithWhereUniqueWithoutUserInput!]
-  deleteMany: [ProgressScalarWhereInput!]
-  updateMany: [ProgressUpdateManyWithWhereNestedInput!]
-}
-
-input ProgressUpdateManyWithWhereNestedInput {
-  where: ProgressScalarWhereInput!
-  data: ProgressUpdateManyDataInput!
-}
-
-input ProgressUpdateWithoutUserDataInput {
-  avancement: Float
-  video: VideoUpdateOneRequiredInput
-}
-
-input ProgressUpdateWithWhereUniqueWithoutUserInput {
-  where: ProgressWhereUniqueInput!
-  data: ProgressUpdateWithoutUserDataInput!
-}
-
-input ProgressUpsertWithWhereUniqueWithoutUserInput {
-  where: ProgressWhereUniqueInput!
-  update: ProgressUpdateWithoutUserDataInput!
-  create: ProgressCreateWithoutUserInput!
-}
-
-input ProgressWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  avancement: Float
-  avancement_not: Float
-  avancement_in: [Float!]
-  avancement_not_in: [Float!]
-  avancement_lt: Float
-  avancement_lte: Float
-  avancement_gt: Float
-  avancement_gte: Float
-  video: VideoWhereInput
-  user: UserWhereInput
-  AND: [ProgressWhereInput!]
-  OR: [ProgressWhereInput!]
-  NOT: [ProgressWhereInput!]
-}
-
-input ProgressWhereUniqueInput {
-  id: ID
-}
-
-type Query {
-  display(where: DisplayWhereUniqueInput!): Display
-  displays(where: DisplayWhereInput, orderBy: DisplayOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Display]!
-  displaysConnection(where: DisplayWhereInput, orderBy: DisplayOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DisplayConnection!
-  progress(where: ProgressWhereUniqueInput!): Progress
-  progresses(where: ProgressWhereInput, orderBy: ProgressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Progress]!
-  progressesConnection(where: ProgressWhereInput, orderBy: ProgressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProgressConnection!
-  season(where: SeasonWhereUniqueInput!): Season
-  seasons(where: SeasonWhereInput, orderBy: SeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Season]!
-  seasonsConnection(where: SeasonWhereInput, orderBy: SeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SeasonConnection!
-  serie(where: SerieWhereUniqueInput!): Serie
-  series(where: SerieWhereInput, orderBy: SerieOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Serie]!
-  seriesConnection(where: SerieWhereInput, orderBy: SerieOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SerieConnection!
-  user(where: UserWhereUniqueInput!): User
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
-  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
-  video(where: VideoWhereUniqueInput!): Video
-  videos(where: VideoWhereInput, orderBy: VideoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Video]!
-  videosConnection(where: VideoWhereInput, orderBy: VideoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VideoConnection!
-  node(id: ID!): Node
-}
-
-type Season {
-  id: ID!
-  name: String
-  episodes(where: VideoWhereInput, orderBy: VideoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Video!]
-}
-
-type SeasonConnection {
-  pageInfo: PageInfo!
-  edges: [SeasonEdge]!
-  aggregate: AggregateSeason!
-}
-
-input SeasonCreateInput {
-  id: ID
-  name: String
-  episodes: VideoCreateManyWithoutSeasonInput
-}
-
-input SeasonCreateManyInput {
-  create: [SeasonCreateInput!]
-  connect: [SeasonWhereUniqueInput!]
-}
-
-input SeasonCreateOneWithoutEpisodesInput {
-  create: SeasonCreateWithoutEpisodesInput
-  connect: SeasonWhereUniqueInput
-}
-
-input SeasonCreateWithoutEpisodesInput {
-  id: ID
-  name: String
-}
-
-type SeasonEdge {
-  node: Season!
-  cursor: String!
-}
-
-enum SeasonOrderByInput {
+enum PlayerOrderByInput {
   id_ASC
   id_DESC
   name_ASC
   name_DESC
-}
-
-type SeasonPreviousValues {
-  id: ID!
-  name: String
-}
-
-input SeasonScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  AND: [SeasonScalarWhereInput!]
-  OR: [SeasonScalarWhereInput!]
-  NOT: [SeasonScalarWhereInput!]
-}
-
-type SeasonSubscriptionPayload {
-  mutation: MutationType!
-  node: Season
-  updatedFields: [String!]
-  previousValues: SeasonPreviousValues
-}
-
-input SeasonSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: SeasonWhereInput
-  AND: [SeasonSubscriptionWhereInput!]
-  OR: [SeasonSubscriptionWhereInput!]
-  NOT: [SeasonSubscriptionWhereInput!]
-}
-
-input SeasonUpdateDataInput {
-  name: String
-  episodes: VideoUpdateManyWithoutSeasonInput
-}
-
-input SeasonUpdateInput {
-  name: String
-  episodes: VideoUpdateManyWithoutSeasonInput
-}
-
-input SeasonUpdateManyDataInput {
-  name: String
-}
-
-input SeasonUpdateManyInput {
-  create: [SeasonCreateInput!]
-  update: [SeasonUpdateWithWhereUniqueNestedInput!]
-  upsert: [SeasonUpsertWithWhereUniqueNestedInput!]
-  delete: [SeasonWhereUniqueInput!]
-  connect: [SeasonWhereUniqueInput!]
-  set: [SeasonWhereUniqueInput!]
-  disconnect: [SeasonWhereUniqueInput!]
-  deleteMany: [SeasonScalarWhereInput!]
-  updateMany: [SeasonUpdateManyWithWhereNestedInput!]
-}
-
-input SeasonUpdateManyMutationInput {
-  name: String
-}
-
-input SeasonUpdateManyWithWhereNestedInput {
-  where: SeasonScalarWhereInput!
-  data: SeasonUpdateManyDataInput!
-}
-
-input SeasonUpdateOneWithoutEpisodesInput {
-  create: SeasonCreateWithoutEpisodesInput
-  update: SeasonUpdateWithoutEpisodesDataInput
-  upsert: SeasonUpsertWithoutEpisodesInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: SeasonWhereUniqueInput
-}
-
-input SeasonUpdateWithoutEpisodesDataInput {
-  name: String
-}
-
-input SeasonUpdateWithWhereUniqueNestedInput {
-  where: SeasonWhereUniqueInput!
-  data: SeasonUpdateDataInput!
-}
-
-input SeasonUpsertWithoutEpisodesInput {
-  update: SeasonUpdateWithoutEpisodesDataInput!
-  create: SeasonCreateWithoutEpisodesInput!
-}
-
-input SeasonUpsertWithWhereUniqueNestedInput {
-  where: SeasonWhereUniqueInput!
-  update: SeasonUpdateDataInput!
-  create: SeasonCreateInput!
-}
-
-input SeasonWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  episodes_every: VideoWhereInput
-  episodes_some: VideoWhereInput
-  episodes_none: VideoWhereInput
-  AND: [SeasonWhereInput!]
-  OR: [SeasonWhereInput!]
-  NOT: [SeasonWhereInput!]
-}
-
-input SeasonWhereUniqueInput {
-  id: ID
-}
-
-type Serie {
-  id: ID!
-  name: String!
-  display: Display
-  seasons(where: SeasonWhereInput, orderBy: SeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Season!]
-}
-
-type SerieConnection {
-  pageInfo: PageInfo!
-  edges: [SerieEdge]!
-  aggregate: AggregateSerie!
-}
-
-input SerieCreateInput {
-  id: ID
-  name: String!
-  display: DisplayCreateOneInput
-  seasons: SeasonCreateManyInput
-}
-
-type SerieEdge {
-  node: Serie!
-  cursor: String!
-}
-
-enum SerieOrderByInput {
-  id_ASC
-  id_DESC
-  name_ASC
-  name_DESC
-}
-
-type SeriePreviousValues {
-  id: ID!
-  name: String!
-}
-
-type SerieSubscriptionPayload {
-  mutation: MutationType!
-  node: Serie
-  updatedFields: [String!]
-  previousValues: SeriePreviousValues
-}
-
-input SerieSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: SerieWhereInput
-  AND: [SerieSubscriptionWhereInput!]
-  OR: [SerieSubscriptionWhereInput!]
-  NOT: [SerieSubscriptionWhereInput!]
-}
-
-input SerieUpdateInput {
-  name: String
-  display: DisplayUpdateOneInput
-  seasons: SeasonUpdateManyInput
-}
-
-input SerieUpdateManyMutationInput {
-  name: String
-}
-
-input SerieWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  display: DisplayWhereInput
-  seasons_every: SeasonWhereInput
-  seasons_some: SeasonWhereInput
-  seasons_none: SeasonWhereInput
-  AND: [SerieWhereInput!]
-  OR: [SerieWhereInput!]
-  NOT: [SerieWhereInput!]
-}
-
-input SerieWhereUniqueInput {
-  id: ID
-}
-
-enum Sexe {
-  MALE
-  FEMALE
-  OTHER
-}
-
-type Subscription {
-  display(where: DisplaySubscriptionWhereInput): DisplaySubscriptionPayload
-  progress(where: ProgressSubscriptionWhereInput): ProgressSubscriptionPayload
-  season(where: SeasonSubscriptionWhereInput): SeasonSubscriptionPayload
-  serie(where: SerieSubscriptionWhereInput): SerieSubscriptionPayload
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
-  video(where: VideoSubscriptionWhereInput): VideoSubscriptionPayload
-}
-
-type User {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  username: String!
-  email: String
-  password: String
-  firstname: String
-  lastname: String
-  birthday: DateTime
-  preferences(where: DisplayWhereInput, orderBy: DisplayOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Display!]
-  description: String
-  sexe: Sexe
-  progresses(where: ProgressWhereInput, orderBy: ProgressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Progress!]
-}
-
-type UserConnection {
-  pageInfo: PageInfo!
-  edges: [UserEdge]!
-  aggregate: AggregateUser!
-}
-
-input UserCreateInput {
-  id: ID
-  username: String!
-  email: String
-  password: String
-  firstname: String
-  lastname: String
-  birthday: DateTime
-  preferences: DisplayCreateManyInput
-  description: String
-  sexe: Sexe
-  progresses: ProgressCreateManyWithoutUserInput
-}
-
-input UserCreateOneWithoutProgressesInput {
-  create: UserCreateWithoutProgressesInput
-  connect: UserWhereUniqueInput
-}
-
-input UserCreateWithoutProgressesInput {
-  id: ID
-  username: String!
-  email: String
-  password: String
-  firstname: String
-  lastname: String
-  birthday: DateTime
-  preferences: DisplayCreateManyInput
-  description: String
-  sexe: Sexe
-}
-
-type UserEdge {
-  node: User!
-  cursor: String!
-}
-
-enum UserOrderByInput {
-  id_ASC
-  id_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  username_ASC
-  username_DESC
-  email_ASC
-  email_DESC
   password_ASC
   password_DESC
-  firstname_ASC
-  firstname_DESC
-  lastname_ASC
-  lastname_DESC
-  birthday_ASC
-  birthday_DESC
-  description_ASC
-  description_DESC
-  sexe_ASC
-  sexe_DESC
+  points_ASC
+  points_DESC
 }
 
-type UserPreviousValues {
+type PlayerPreviousValues {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  username: String!
-  email: String
-  password: String
-  firstname: String
-  lastname: String
-  birthday: DateTime
-  description: String
-  sexe: Sexe
+  name: String!
+  password: String!
+  points: Int
 }
 
-type UserSubscriptionPayload {
-  mutation: MutationType!
-  node: User
-  updatedFields: [String!]
-  previousValues: UserPreviousValues
-}
-
-input UserSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: UserWhereInput
-  AND: [UserSubscriptionWhereInput!]
-  OR: [UserSubscriptionWhereInput!]
-  NOT: [UserSubscriptionWhereInput!]
-}
-
-input UserUpdateInput {
-  username: String
-  email: String
-  password: String
-  firstname: String
-  lastname: String
-  birthday: DateTime
-  preferences: DisplayUpdateManyInput
-  description: String
-  sexe: Sexe
-  progresses: ProgressUpdateManyWithoutUserInput
-}
-
-input UserUpdateManyMutationInput {
-  username: String
-  email: String
-  password: String
-  firstname: String
-  lastname: String
-  birthday: DateTime
-  description: String
-  sexe: Sexe
-}
-
-input UserUpdateOneRequiredWithoutProgressesInput {
-  create: UserCreateWithoutProgressesInput
-  update: UserUpdateWithoutProgressesDataInput
-  upsert: UserUpsertWithoutProgressesInput
-  connect: UserWhereUniqueInput
-}
-
-input UserUpdateWithoutProgressesDataInput {
-  username: String
-  email: String
-  password: String
-  firstname: String
-  lastname: String
-  birthday: DateTime
-  preferences: DisplayUpdateManyInput
-  description: String
-  sexe: Sexe
-}
-
-input UserUpsertWithoutProgressesInput {
-  update: UserUpdateWithoutProgressesDataInput!
-  create: UserCreateWithoutProgressesInput!
-}
-
-input UserWhereInput {
+input PlayerScalarWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -1187,50 +309,20 @@ input UserWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  username: String
-  username_not: String
-  username_in: [String!]
-  username_not_in: [String!]
-  username_lt: String
-  username_lte: String
-  username_gt: String
-  username_gte: String
-  username_contains: String
-  username_not_contains: String
-  username_starts_with: String
-  username_not_starts_with: String
-  username_ends_with: String
-  username_not_ends_with: String
-  email: String
-  email_not: String
-  email_in: [String!]
-  email_not_in: [String!]
-  email_lt: String
-  email_lte: String
-  email_gt: String
-  email_gte: String
-  email_contains: String
-  email_not_contains: String
-  email_starts_with: String
-  email_not_starts_with: String
-  email_ends_with: String
-  email_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
   password: String
   password_not: String
   password_in: [String!]
@@ -1245,273 +337,91 @@ input UserWhereInput {
   password_not_starts_with: String
   password_ends_with: String
   password_not_ends_with: String
-  firstname: String
-  firstname_not: String
-  firstname_in: [String!]
-  firstname_not_in: [String!]
-  firstname_lt: String
-  firstname_lte: String
-  firstname_gt: String
-  firstname_gte: String
-  firstname_contains: String
-  firstname_not_contains: String
-  firstname_starts_with: String
-  firstname_not_starts_with: String
-  firstname_ends_with: String
-  firstname_not_ends_with: String
-  lastname: String
-  lastname_not: String
-  lastname_in: [String!]
-  lastname_not_in: [String!]
-  lastname_lt: String
-  lastname_lte: String
-  lastname_gt: String
-  lastname_gte: String
-  lastname_contains: String
-  lastname_not_contains: String
-  lastname_starts_with: String
-  lastname_not_starts_with: String
-  lastname_ends_with: String
-  lastname_not_ends_with: String
-  birthday: DateTime
-  birthday_not: DateTime
-  birthday_in: [DateTime!]
-  birthday_not_in: [DateTime!]
-  birthday_lt: DateTime
-  birthday_lte: DateTime
-  birthday_gt: DateTime
-  birthday_gte: DateTime
-  preferences_every: DisplayWhereInput
-  preferences_some: DisplayWhereInput
-  preferences_none: DisplayWhereInput
-  description: String
-  description_not: String
-  description_in: [String!]
-  description_not_in: [String!]
-  description_lt: String
-  description_lte: String
-  description_gt: String
-  description_gte: String
-  description_contains: String
-  description_not_contains: String
-  description_starts_with: String
-  description_not_starts_with: String
-  description_ends_with: String
-  description_not_ends_with: String
-  sexe: Sexe
-  sexe_not: Sexe
-  sexe_in: [Sexe!]
-  sexe_not_in: [Sexe!]
-  progresses_every: ProgressWhereInput
-  progresses_some: ProgressWhereInput
-  progresses_none: ProgressWhereInput
-  AND: [UserWhereInput!]
-  OR: [UserWhereInput!]
-  NOT: [UserWhereInput!]
+  points: Int
+  points_not: Int
+  points_in: [Int!]
+  points_not_in: [Int!]
+  points_lt: Int
+  points_lte: Int
+  points_gt: Int
+  points_gte: Int
+  AND: [PlayerScalarWhereInput!]
+  OR: [PlayerScalarWhereInput!]
+  NOT: [PlayerScalarWhereInput!]
 }
 
-input UserWhereUniqueInput {
-  id: ID
-  username: String
-  email: String
-}
-
-type Video {
-  id: ID!
-  name: String!
-  url: String!
-  display: Display!
-  season: Season
-}
-
-type VideoConnection {
-  pageInfo: PageInfo!
-  edges: [VideoEdge]!
-  aggregate: AggregateVideo!
-}
-
-input VideoCreateInput {
-  id: ID
-  name: String!
-  url: String!
-  display: DisplayCreateOneInput!
-  season: SeasonCreateOneWithoutEpisodesInput
-}
-
-input VideoCreateManyWithoutSeasonInput {
-  create: [VideoCreateWithoutSeasonInput!]
-  connect: [VideoWhereUniqueInput!]
-}
-
-input VideoCreateOneInput {
-  create: VideoCreateInput
-  connect: VideoWhereUniqueInput
-}
-
-input VideoCreateWithoutSeasonInput {
-  id: ID
-  name: String!
-  url: String!
-  display: DisplayCreateOneInput!
-}
-
-type VideoEdge {
-  node: Video!
-  cursor: String!
-}
-
-enum VideoOrderByInput {
-  id_ASC
-  id_DESC
-  name_ASC
-  name_DESC
-  url_ASC
-  url_DESC
-}
-
-type VideoPreviousValues {
-  id: ID!
-  name: String!
-  url: String!
-}
-
-input VideoScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  url: String
-  url_not: String
-  url_in: [String!]
-  url_not_in: [String!]
-  url_lt: String
-  url_lte: String
-  url_gt: String
-  url_gte: String
-  url_contains: String
-  url_not_contains: String
-  url_starts_with: String
-  url_not_starts_with: String
-  url_ends_with: String
-  url_not_ends_with: String
-  AND: [VideoScalarWhereInput!]
-  OR: [VideoScalarWhereInput!]
-  NOT: [VideoScalarWhereInput!]
-}
-
-type VideoSubscriptionPayload {
+type PlayerSubscriptionPayload {
   mutation: MutationType!
-  node: Video
+  node: Player
   updatedFields: [String!]
-  previousValues: VideoPreviousValues
+  previousValues: PlayerPreviousValues
 }
 
-input VideoSubscriptionWhereInput {
+input PlayerSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: VideoWhereInput
-  AND: [VideoSubscriptionWhereInput!]
-  OR: [VideoSubscriptionWhereInput!]
-  NOT: [VideoSubscriptionWhereInput!]
+  node: PlayerWhereInput
+  AND: [PlayerSubscriptionWhereInput!]
+  OR: [PlayerSubscriptionWhereInput!]
+  NOT: [PlayerSubscriptionWhereInput!]
 }
 
-input VideoUpdateDataInput {
+input PlayerUpdateInput {
   name: String
-  url: String
-  display: DisplayUpdateOneRequiredInput
-  season: SeasonUpdateOneWithoutEpisodesInput
+  password: String
+  points: Int
+  games: GameUpdateManyWithoutPlayersInput
 }
 
-input VideoUpdateInput {
+input PlayerUpdateManyDataInput {
   name: String
-  url: String
-  display: DisplayUpdateOneRequiredInput
-  season: SeasonUpdateOneWithoutEpisodesInput
+  password: String
+  points: Int
 }
 
-input VideoUpdateManyDataInput {
+input PlayerUpdateManyMutationInput {
   name: String
-  url: String
+  password: String
+  points: Int
 }
 
-input VideoUpdateManyMutationInput {
+input PlayerUpdateManyWithoutGamesInput {
+  create: [PlayerCreateWithoutGamesInput!]
+  delete: [PlayerWhereUniqueInput!]
+  connect: [PlayerWhereUniqueInput!]
+  set: [PlayerWhereUniqueInput!]
+  disconnect: [PlayerWhereUniqueInput!]
+  update: [PlayerUpdateWithWhereUniqueWithoutGamesInput!]
+  upsert: [PlayerUpsertWithWhereUniqueWithoutGamesInput!]
+  deleteMany: [PlayerScalarWhereInput!]
+  updateMany: [PlayerUpdateManyWithWhereNestedInput!]
+}
+
+input PlayerUpdateManyWithWhereNestedInput {
+  where: PlayerScalarWhereInput!
+  data: PlayerUpdateManyDataInput!
+}
+
+input PlayerUpdateWithoutGamesDataInput {
   name: String
-  url: String
+  password: String
+  points: Int
 }
 
-input VideoUpdateManyWithoutSeasonInput {
-  create: [VideoCreateWithoutSeasonInput!]
-  delete: [VideoWhereUniqueInput!]
-  connect: [VideoWhereUniqueInput!]
-  set: [VideoWhereUniqueInput!]
-  disconnect: [VideoWhereUniqueInput!]
-  update: [VideoUpdateWithWhereUniqueWithoutSeasonInput!]
-  upsert: [VideoUpsertWithWhereUniqueWithoutSeasonInput!]
-  deleteMany: [VideoScalarWhereInput!]
-  updateMany: [VideoUpdateManyWithWhereNestedInput!]
+input PlayerUpdateWithWhereUniqueWithoutGamesInput {
+  where: PlayerWhereUniqueInput!
+  data: PlayerUpdateWithoutGamesDataInput!
 }
 
-input VideoUpdateManyWithWhereNestedInput {
-  where: VideoScalarWhereInput!
-  data: VideoUpdateManyDataInput!
+input PlayerUpsertWithWhereUniqueWithoutGamesInput {
+  where: PlayerWhereUniqueInput!
+  update: PlayerUpdateWithoutGamesDataInput!
+  create: PlayerCreateWithoutGamesInput!
 }
 
-input VideoUpdateOneRequiredInput {
-  create: VideoCreateInput
-  update: VideoUpdateDataInput
-  upsert: VideoUpsertNestedInput
-  connect: VideoWhereUniqueInput
-}
-
-input VideoUpdateWithoutSeasonDataInput {
-  name: String
-  url: String
-  display: DisplayUpdateOneRequiredInput
-}
-
-input VideoUpdateWithWhereUniqueWithoutSeasonInput {
-  where: VideoWhereUniqueInput!
-  data: VideoUpdateWithoutSeasonDataInput!
-}
-
-input VideoUpsertNestedInput {
-  update: VideoUpdateDataInput!
-  create: VideoCreateInput!
-}
-
-input VideoUpsertWithWhereUniqueWithoutSeasonInput {
-  where: VideoWhereUniqueInput!
-  update: VideoUpdateWithoutSeasonDataInput!
-  create: VideoCreateWithoutSeasonInput!
-}
-
-input VideoWhereInput {
+input PlayerWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -1540,28 +450,318 @@ input VideoWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  url: String
-  url_not: String
-  url_in: [String!]
-  url_not_in: [String!]
-  url_lt: String
-  url_lte: String
-  url_gt: String
-  url_gte: String
-  url_contains: String
-  url_not_contains: String
-  url_starts_with: String
-  url_not_starts_with: String
-  url_ends_with: String
-  url_not_ends_with: String
-  display: DisplayWhereInput
-  season: SeasonWhereInput
-  AND: [VideoWhereInput!]
-  OR: [VideoWhereInput!]
-  NOT: [VideoWhereInput!]
+  password: String
+  password_not: String
+  password_in: [String!]
+  password_not_in: [String!]
+  password_lt: String
+  password_lte: String
+  password_gt: String
+  password_gte: String
+  password_contains: String
+  password_not_contains: String
+  password_starts_with: String
+  password_not_starts_with: String
+  password_ends_with: String
+  password_not_ends_with: String
+  points: Int
+  points_not: Int
+  points_in: [Int!]
+  points_not_in: [Int!]
+  points_lt: Int
+  points_lte: Int
+  points_gt: Int
+  points_gte: Int
+  games_every: GameWhereInput
+  games_some: GameWhereInput
+  games_none: GameWhereInput
+  AND: [PlayerWhereInput!]
+  OR: [PlayerWhereInput!]
+  NOT: [PlayerWhereInput!]
 }
 
-input VideoWhereUniqueInput {
+input PlayerWhereUniqueInput {
   id: ID
+  name: String
+}
+
+type Query {
+  game(where: GameWhereUniqueInput!): Game
+  games(where: GameWhereInput, orderBy: GameOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Game]!
+  gamesConnection(where: GameWhereInput, orderBy: GameOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GameConnection!
+  player(where: PlayerWhereUniqueInput!): Player
+  players(where: PlayerWhereInput, orderBy: PlayerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Player]!
+  playersConnection(where: PlayerWhereInput, orderBy: PlayerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PlayerConnection!
+  question(where: QuestionWhereUniqueInput!): Question
+  questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question]!
+  questionsConnection(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionConnection!
+  node(id: ID!): Node
+}
+
+type Question {
+  id: ID!
+  category: String!
+  question: String!
+  correctAnswer: String!
+  answers: [String!]!
+}
+
+type QuestionConnection {
+  pageInfo: PageInfo!
+  edges: [QuestionEdge]!
+  aggregate: AggregateQuestion!
+}
+
+input QuestionCreateanswersInput {
+  set: [String!]
+}
+
+input QuestionCreateInput {
+  id: ID
+  category: String!
+  question: String!
+  correctAnswer: String!
+  answers: QuestionCreateanswersInput
+}
+
+input QuestionCreateManyInput {
+  create: [QuestionCreateInput!]
+  connect: [QuestionWhereUniqueInput!]
+}
+
+type QuestionEdge {
+  node: Question!
+  cursor: String!
+}
+
+enum QuestionOrderByInput {
+  id_ASC
+  id_DESC
+  category_ASC
+  category_DESC
+  question_ASC
+  question_DESC
+  correctAnswer_ASC
+  correctAnswer_DESC
+}
+
+type QuestionPreviousValues {
+  id: ID!
+  category: String!
+  question: String!
+  correctAnswer: String!
+  answers: [String!]!
+}
+
+input QuestionScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  category: String
+  category_not: String
+  category_in: [String!]
+  category_not_in: [String!]
+  category_lt: String
+  category_lte: String
+  category_gt: String
+  category_gte: String
+  category_contains: String
+  category_not_contains: String
+  category_starts_with: String
+  category_not_starts_with: String
+  category_ends_with: String
+  category_not_ends_with: String
+  question: String
+  question_not: String
+  question_in: [String!]
+  question_not_in: [String!]
+  question_lt: String
+  question_lte: String
+  question_gt: String
+  question_gte: String
+  question_contains: String
+  question_not_contains: String
+  question_starts_with: String
+  question_not_starts_with: String
+  question_ends_with: String
+  question_not_ends_with: String
+  correctAnswer: String
+  correctAnswer_not: String
+  correctAnswer_in: [String!]
+  correctAnswer_not_in: [String!]
+  correctAnswer_lt: String
+  correctAnswer_lte: String
+  correctAnswer_gt: String
+  correctAnswer_gte: String
+  correctAnswer_contains: String
+  correctAnswer_not_contains: String
+  correctAnswer_starts_with: String
+  correctAnswer_not_starts_with: String
+  correctAnswer_ends_with: String
+  correctAnswer_not_ends_with: String
+  AND: [QuestionScalarWhereInput!]
+  OR: [QuestionScalarWhereInput!]
+  NOT: [QuestionScalarWhereInput!]
+}
+
+type QuestionSubscriptionPayload {
+  mutation: MutationType!
+  node: Question
+  updatedFields: [String!]
+  previousValues: QuestionPreviousValues
+}
+
+input QuestionSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: QuestionWhereInput
+  AND: [QuestionSubscriptionWhereInput!]
+  OR: [QuestionSubscriptionWhereInput!]
+  NOT: [QuestionSubscriptionWhereInput!]
+}
+
+input QuestionUpdateanswersInput {
+  set: [String!]
+}
+
+input QuestionUpdateDataInput {
+  category: String
+  question: String
+  correctAnswer: String
+  answers: QuestionUpdateanswersInput
+}
+
+input QuestionUpdateInput {
+  category: String
+  question: String
+  correctAnswer: String
+  answers: QuestionUpdateanswersInput
+}
+
+input QuestionUpdateManyDataInput {
+  category: String
+  question: String
+  correctAnswer: String
+  answers: QuestionUpdateanswersInput
+}
+
+input QuestionUpdateManyInput {
+  create: [QuestionCreateInput!]
+  update: [QuestionUpdateWithWhereUniqueNestedInput!]
+  upsert: [QuestionUpsertWithWhereUniqueNestedInput!]
+  delete: [QuestionWhereUniqueInput!]
+  connect: [QuestionWhereUniqueInput!]
+  set: [QuestionWhereUniqueInput!]
+  disconnect: [QuestionWhereUniqueInput!]
+  deleteMany: [QuestionScalarWhereInput!]
+  updateMany: [QuestionUpdateManyWithWhereNestedInput!]
+}
+
+input QuestionUpdateManyMutationInput {
+  category: String
+  question: String
+  correctAnswer: String
+  answers: QuestionUpdateanswersInput
+}
+
+input QuestionUpdateManyWithWhereNestedInput {
+  where: QuestionScalarWhereInput!
+  data: QuestionUpdateManyDataInput!
+}
+
+input QuestionUpdateWithWhereUniqueNestedInput {
+  where: QuestionWhereUniqueInput!
+  data: QuestionUpdateDataInput!
+}
+
+input QuestionUpsertWithWhereUniqueNestedInput {
+  where: QuestionWhereUniqueInput!
+  update: QuestionUpdateDataInput!
+  create: QuestionCreateInput!
+}
+
+input QuestionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  category: String
+  category_not: String
+  category_in: [String!]
+  category_not_in: [String!]
+  category_lt: String
+  category_lte: String
+  category_gt: String
+  category_gte: String
+  category_contains: String
+  category_not_contains: String
+  category_starts_with: String
+  category_not_starts_with: String
+  category_ends_with: String
+  category_not_ends_with: String
+  question: String
+  question_not: String
+  question_in: [String!]
+  question_not_in: [String!]
+  question_lt: String
+  question_lte: String
+  question_gt: String
+  question_gte: String
+  question_contains: String
+  question_not_contains: String
+  question_starts_with: String
+  question_not_starts_with: String
+  question_ends_with: String
+  question_not_ends_with: String
+  correctAnswer: String
+  correctAnswer_not: String
+  correctAnswer_in: [String!]
+  correctAnswer_not_in: [String!]
+  correctAnswer_lt: String
+  correctAnswer_lte: String
+  correctAnswer_gt: String
+  correctAnswer_gte: String
+  correctAnswer_contains: String
+  correctAnswer_not_contains: String
+  correctAnswer_starts_with: String
+  correctAnswer_not_starts_with: String
+  correctAnswer_ends_with: String
+  correctAnswer_not_ends_with: String
+  AND: [QuestionWhereInput!]
+  OR: [QuestionWhereInput!]
+  NOT: [QuestionWhereInput!]
+}
+
+input QuestionWhereUniqueInput {
+  id: ID
+}
+
+type Subscription {
+  game(where: GameSubscriptionWhereInput): GameSubscriptionPayload
+  player(where: PlayerSubscriptionWhereInput): PlayerSubscriptionPayload
+  question(where: QuestionSubscriptionWhereInput): QuestionSubscriptionPayload
 }
 `

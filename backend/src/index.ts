@@ -10,22 +10,21 @@ import history from 'connect-history-api-fallback'
 import bodyParser from 'body-parser'
 import { mergeTypes } from 'merge-graphql-schemas'
 import { readFileSync } from 'fs'
-import { getUserId } from './helpers/user'
-import user from './resolvers/user'
 import { Prisma } from '../prisma/generated/prisma-client'
 import { appRouter } from './routes/routes'
+import user from './resolvers/user'
 
-const SOCKET_PORT = 8080
-const SERVER_IP = '127.0.0.1'
+const cors = require('cors')
+
+export const SOCKET_PORT = 7545
+export const SERVER_IP = '127.0.0.1'
 
 const forwardedRequests = [
     // ! Queries
-  'Query.usersConnection', 'Query.user',
-  'Query.video', 'Query.videos',
-  'Query.display', 'Query.displays',
-
+  'Query.games', 'Query.game',
+  'Query.players', 'Query.player', 'Query.playersConnection',
     // ! Mutations
-  'Mutation.createUser', 'Mutation.updateUser', 'Mutation.deleteUser'
+  'Mutation.createPlayer'
 ]
 
 const resolvers = {
@@ -41,16 +40,6 @@ const resolvers = {
   }
 }
 
-const checkUserMiddleware = (resolve, root, args, context, info) => {
-  if ((info.parentType === 'Query' || info.parentType === 'Mutation' || info.parentType === 'Subscription') &&
-        info.fieldName !== 'login' &&
-        info.fieldName !== 'signup') {
-    context.userId = getUserId(context)
-  }
-
-  return resolve(root, args, context, info)
-}
-
 const bindingForwardMiddleware = forward(...forwardedRequests)('binding')
 
 let prisma = new Prisma({
@@ -64,7 +53,7 @@ let binding = new PrismaBinding({
 const server = new GraphQLServer({
   typeDefs: mergeTypes([readFileSync('./prisma/generated/prisma.graphql').toString(), readFileSync('./schema.graphql').toString()], { all: true }),
   resolvers,
-  middlewares: [bindingForwardMiddleware, checkUserMiddleware],
+  middlewares: [bindingForwardMiddleware],
   context: (c) => {
     return {
       connection: c.connection,
@@ -77,14 +66,13 @@ const server = new GraphQLServer({
 
 // Express server config
 
+server.express.use(cors())
+
 server.express.use(bodyParser.json({ limit: '50mb' }))
 server.express.use(bodyParser.urlencoded({
   limit: '10mb',
   extended: true
 }))
-
-server.express.set('views', './src/views')
-server.express.set('view engine', 'ejs')
 
 server.express.use(function (req, res, next) {
   req.prisma = prisma

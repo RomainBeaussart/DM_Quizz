@@ -8,8 +8,8 @@ import App from './App.vue';
 import router from './router';
 import store from './store/store';
 
+import VueChatScroll from 'vue-chat-scroll'
 import { createProvider } from './vue-apollo'
-import VideoBg from './components/VideoBackground.vue'
 import VueSelectImage from 'vue-select-image'
 
 //
@@ -22,18 +22,16 @@ Vue.config.productionTip = false;
 
 Vue.use(VueApollo)
 Vue.use(VueSelectImage)
+Vue.use(VueChatScroll)
 Vue.component('file-upload', VueUploadComponent)
-Vue.component('video-bg', VideoBg)
 
 require('vue-select-image/dist/vue-select-image.css')
 
 new Vue({
     router,
     store,
-
     vuetify,
     // @ts-ignore
 
-    apolloProvider: createProvider(),
     render: h => h(App)
 } as any).$mount('#app');

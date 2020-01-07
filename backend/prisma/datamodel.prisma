@@ -1,0 +1,22 @@
+type Player {
+    id: ID! @id
+    name: String! @unique
+    password: String!
+    points: Int @default(value: 0)
+    games: [Game!] @relation(name: "GamePlayers")
+}
+
+type Question {
+    id: ID! @id
+    category: String!
+    question: String!
+    correctAnswer: String!
+    answers: [String!] @scalarList(strategy: EMBEDDED)
+}
+
+type Game {
+    id: ID! @id
+    players: [Player!] @relation(name: "GamePlayers" link: INLINE)
+    maxPlayers: Int
+    questions: [Question!] @relation(name: "GameQuestions" link: INLINE)
+}
