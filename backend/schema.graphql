@@ -19,4 +19,5 @@ input LoginInput {
 
 type LoginPayload {
     id: ID!
+    name: String!
 }

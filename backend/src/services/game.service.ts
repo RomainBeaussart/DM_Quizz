@@ -55,9 +55,8 @@ export const listen = (game: Game) => {
     // new player join the game
     socket.on('new_player', (user: User) => {
       const newPlayer = createPlayer(user)
-
       // add the player to the game object
-      if (!game.start && !game.players.map(_ => _.user.name).includes(newPlayer.user.name)) {
+      if (!game.start && !game.players.map(_ => _.user.id).includes(newPlayer.user.id)) {
         game.players.push(newPlayer)
       }
 

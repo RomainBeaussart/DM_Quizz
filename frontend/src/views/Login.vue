@@ -64,8 +64,7 @@ export default class Login extends Vue {
             }
         })
         if (result.data && result.data.login && result.data.login.id) {
-            debugger
-            this.$store.commit('setUserId', result.data.login.id)
+            this.$store.commit('setUser', { id: result.data.login.id, name: result.data.login.name })
         }
         console.log(this.$store.state.user.id)
         this.$router.push({name: 'chats' })
