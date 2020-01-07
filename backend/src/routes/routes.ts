@@ -4,11 +4,11 @@ import { User } from '../models/user.model'
 import { createGame, listen } from '../services/game.service'
 import { Question } from '../models/question.model'
 import getQuestions from '../_api'
+import { SERVER_IP, SOCKET_PORT } from '..'
 
 export const appRouter = () => {
   const router = Router()
   const games: Array<Game> = []
-  const players: Array<User> = []
 
   /**
    * create a chat / a game instance
@@ -30,13 +30,13 @@ export const appRouter = () => {
     if (!user || !gameConfig || !gameConfig.maxPlayers) {
       res.sendStatus(500)
     }
-    console.log('get the questions')
     getQuestions()
       .then((questions: Array<Question>) => {
-        const newGame: Game = createGame(games.length + 1, req.app.get('socketio'), [user], questions, gameConfig.maxPlayers)
+        const gameId = games.length + 1
+        const newGame: Game = createGame(gameId, req.app.get('socketio'), [user], questions, gameConfig.maxPlayers)
         games.push(newGame)
         listen(newGame)
-        res.sendStatus(200)
+        res.send({ url: `http://${SERVER_IP}:8080/chat/${gameId}` })
       })
       .catch(err => {
         console.error(err)

@@ -22,7 +22,7 @@ const router = new Router({
           { path: '/', name: 'login', component: Login },
           { path: '/signup', name: 'signup', component: SignUp },
           { path: '/chats', name: 'chats', component: Chats },
-          { path: '/chat', name: 'chat', component: Chat }
+          { path: '/chat/:id', name: 'chat', component: Chat, props: true }
         ]
     }
   ]

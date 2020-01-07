@@ -16,17 +16,15 @@ import user from './resolvers/user'
 
 const cors = require('cors')
 
-const SOCKET_PORT = 7545
-const SERVER_IP = '127.0.0.1'
+export const SOCKET_PORT = 7545
+export const SERVER_IP = '127.0.0.1'
 
 const forwardedRequests = [
     // ! Queries
-    "Query.games", "Query.game", 
-    "Query.players", "Query.player", "Query.playersConnection",
-
-
+  'Query.games', 'Query.game',
+  'Query.players', 'Query.player', 'Query.playersConnection',
     // ! Mutations
-    "Mutation.createPlayer"
+  'Mutation.createPlayer'
 ]
 
 const resolvers = {

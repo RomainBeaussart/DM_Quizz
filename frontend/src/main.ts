@@ -30,7 +30,6 @@ require('vue-select-image/dist/vue-select-image.css')
 new Vue({
     router,
     store,
-    apolloProvider: createProvider(),
     vuetify,
     // @ts-ignore
 

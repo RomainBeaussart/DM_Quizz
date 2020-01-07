@@ -150,7 +150,7 @@ function getStringAnswers (answers: Array<String>): String {
 
 @Component
 export default class Chat extends Vue {
-  @Prop(Number) readonly chatID: number | undefined
+  @Prop(String) readonly id: String
   state = "Wait for players"
   chatSocket = null
   snackbar: Boolean = false
@@ -169,15 +169,9 @@ export default class Chat extends Vue {
   error = null
 
   async mounted() {
-    let res = null
     try {
-      res = await axios.post('http://localhost:4000/dmquizz', {
-        user: this.$store.state.user,
-        config: { maxPlayers: 1 }
-      })
 
-      if (res.status === 200) {
-        this.chatSocket = createSocket('1')
+        this.chatSocket = createSocket(this.id)
 
         // we new player join the game
         this.chatSocket.on('is_online', (player: any) => {
@@ -288,9 +282,6 @@ export default class Chat extends Vue {
 
         // join the game instance
         this.chatSocket.emit('new_player', this.$store.state.user)
-      } else {
-        this.error = 'server error'
-      }
     } catch (err) {
       this.error = err
     }

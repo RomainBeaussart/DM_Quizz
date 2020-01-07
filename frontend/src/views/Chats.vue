@@ -13,6 +13,28 @@
                     <v-icon>add</v-icon>
                 </v-btn>
             </v-flex>
+            <v-flex md12 class="d-flex justify-center">
+              <form>
+                <v-text-field
+                  v-model="maxPlayers"
+                  label="Max players"
+                  data-vv-name="name"
+                  required
+                ></v-text-field>
+                <v-btn class="mr-4" @click="submit">submit</v-btn>
+              </form>
+            </v-flex>
+            <v-flex md12 v-if="link" class="d-flex justify-center">
+               <v-card
+                  color="#385F73"
+                  dark
+                >
+                  <v-card-title class="headline">Send this link to your friends !</v-card-title>
+
+                  <v-card-subtitle>{{link}}</v-card-subtitle>
+                </v-card>
+            </v-flex>
+            <!--
             <v-flex xs12 class="d-flex justify-center">
                 <v-card
                     width="80%"
@@ -26,7 +48,6 @@
                         fixed-header
                         :loading="loading"
                     >
-                        <!-- BODY -->
                         <template v-slot:item = "props">
                             <tr>
                                 <td class="text-center"> {{ last(props.item.questions).question }} </td>
@@ -43,6 +64,7 @@
                     </v-data-table>
                 </v-card>
             </v-flex>
+            -->
         </v-layout>
     </v-container>
 </template>
@@ -55,6 +77,7 @@ import { Apollo } from '../decorators'
 
 @Component
 export default class Chats extends Vue {
+
 
     headers = [
         { text: "Last Question", value: "" },
@@ -87,6 +110,17 @@ export default class Chats extends Vue {
         }
     })
     chats= []
+    link = null
+    maxPlayers = null
+
+    async submit() {
+      const axios = require('axios')
+      const res = await axios.post('http://localhost:4000/dmquizz', {
+        user: this.$store.state.user,
+        config: { maxPlayers: parseInt(this.maxPlayers, 10) }
+      })
+      this.link = res.data.url
+    }
 
     last(list: Array<any>) {
         return list[list.length - 1]

@@ -42,7 +42,7 @@
     "typescript": "^3.3.3",
     "uws": "^100.0.1",
     "vue": "^2.6.6",
-    "vue-apollo": "iharmanpannu/vue-apollo#patch-1",
+    "vue-apollo": "github:iharmanpannu/vue-apollo#patch-1",
     "vue-chartjs": "^3.4.0",
     "vue-chat-scroll": "^1.3.6",
     "vue-class-component": "^6.0.0",
